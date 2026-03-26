@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jevel</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Language Switcher -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="es">Español</button>
+    <button class="lang-btn" data-lang="pt">Português</button>
+    <button class="lang-btn" data-lang="en">English</button>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="noise-overlay"></div>
+    <div class="hero-inner">
+      <div class="logo-wrap">
+        <img src="rca.png" alt="Jevel" class="logo" />
+        <button class="gram-play-btn" id="audioPlayBtn" aria-label="Reproducir">
+          <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24"><polygon points="5,3 5,21 21,12" fill="#1a1209"/></svg>
+          <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" style="display:none"><rect x="4" y="3" width="5" height="18" fill="#1a1209"/><rect x="15" y="3" width="5" height="18" fill="#1a1209"/></svg>
+        </button>
+        <audio id="audioPlayer" src="muchoojo.mp3"></audio>
+      </div>
+      <p class="tagline" data-i18n="tagline">
+        Jevel es un sello independiente de música ídish y klezmer.
+      </p>
+      <div class="deco-line"></div>
+    </div>
+    <div class="scroll-hint">↓</div>
+  </header>
+
+  <!-- NEW RELEASE -->
+  <section class="release" id="release">
+    <div class="section-label" data-i18n="newRelease">nuevo lanzamiento</div>
+    <div class="release-inner">
+      <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
+        <div class="cover-wrap">
+          <img src="Mateshpil-cover.jpg" alt="Mateshpil" class="cover-img" />
+          <div class="cover-overlay">
+            <span data-i18n="listenBandcamp">Escuchar en Bandcamp →</span>
+          </div>
+        </div>
+      </a>
+      <div class="release-info">
+        <h2 class="release-title">מאַטעשפּיל</h2>
+        <h3 class="release-subtitle">Mateshpil</h3>
+        <p class="release-artist">Julián Brenlle &amp; Klezmer Três Rios</p>
+        <p class="release-desc" data-i18n="releaseDesc">
+          Una sesión klezmer en Buenos Aires, 2024.
+        </p>
+        <!-- =====================================================
+             BOTONES DE LANZAMIENTO
+             hay_resena: cambiá a true/false para mostrar u ocultar
+             resena_url: la página de la reseña
+        ====================================================== -->
+        <div class="release-btns"
+             data-hay-resena="false"
+             data-resena-url="resena-mateshpil.html">
+          <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="btn-bandcamp">
+            <span data-i18n="listenNow">Escuchar ahora</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <a href="resena-mateshpil.html" class="btn-resena" data-i18n-href="resenaBtn">
+            <span data-i18n="resenaBtn">Leer reseña</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="section-ornament">✦</div>
+  </section>
+
+  <!-- GAME SECTION -->
+  <section class="game" id="game">
+    <div class="game-inner">
+      <div class="game-text">
+        <div class="section-label" data-i18n="gameLabel">el juego</div>
+        <h2 class="game-title">Oyfn Pripetshik</h2>
+        <div class="game-desc">
+          <p data-i18n="gameDesc1">Inspirado en la <em>folk lid</em> de Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: El Juego</strong> es una manera entretenida de practicar el alef-beys.</p>
+          <p data-i18n="gameDesc2">Con tres niveles de dificultad y desafíos personalizables, avanzás a tu ritmo.</p>
+        </div>
+        <div class="game-features">
+          <span data-i18n="feat1">Vocales</span>
+          <span data-i18n="feat2">Diptongos</span>
+          <span data-i18n="feat3">Consonantes</span>
+          <span data-i18n="feat4">Grupos de consonantes</span>
+          <span data-i18n="feat5">Finales</span>
+          <span data-i18n="feat6">Loshn-Koydesh</span>
+          <span data-i18n="feat7">Cuadrada / Cursiva</span>
+        </div>
+        <div class="game-btns">
+          <a href="oyfnpripetshik.html" target="_blank" class="btn-game">
+            <span data-i18n="playBtn">Jugar</span>
+          </a>
+          <button onclick="downloadGame()" class="btn-download">
+            <span data-i18n="downloadBtn">Bajar</span>
+          </button>
+        </div>
+      </div>
+      <div class="game-visual">
+        <div class="game-photo-wrap">
+          <img src="03.jpg" alt="Oyfn Pripetshik" class="game-photo" />
+        </div>
+      </div>
+    </div>
+    <div class="section-ornament">✦</div>
+  </section>
+
+  <!-- LINKS -->
+  <section class="contact" id="contact">
+    <div class="section-label" data-i18n="contactLabel">Links y contacto</div>
+    <div class="contact-body">
+      <img src="vitrola.png" alt="" class="rca-img" />
+      <div class="contact-links">
+        <a href="notas.html" class="contact-item">
+          <span class="contact-icon">·</span>
+          <span class="contact-text">Notas</span>
+        </a>
+        <a href="mailto:jeveldiscos@gmail.com" class="contact-item">
+          <span class="contact-icon">·</span>
+          <span class="contact-text">jeveldiscos@gmail.com</span>
+        </a>
+        <a href="https://instagram.com/jeveldiscos" target="_blank" class="contact-item" rel="noopener">
+          <span class="contact-icon">·</span>
+          <span class="contact-text">instagram.com/jeveldiscos</span>
+        </a>
+        <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="contact-item" rel="noopener">
+          <span class="contact-icon">·</span>
+          <span class="contact-text">jeveldiscos.bandcamp.com</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo-wrap"><img src="logolapiz.png" alt="Jevel" class="footer-logo" /></div>
+    <p class="footer-text">Jevel · 2026 · Buenos Aires</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
