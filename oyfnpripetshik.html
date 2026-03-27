@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>אויפֿן פּריפּעטשיק</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Courier+Prime:wght@400;700&family=IBM+Plex+Mono:wght@400;700&family=Playpen+Sans+Hebrew:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #120a04;
+    --parchment: #f0ddb8;
+    --parch2:    #c9a462;
+    --ember:     #e8621a;
+    --ember2:    #f5a623;
+    --fire:      #ffd166;
+    --ash:       #8b7355;
+    --cream:     #faf0dc;
+    --red:       #c0392b;
+    --green2:    #6b9c5e;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    background:var(--bg); color:var(--parchment);
+    font-family:'EB Garamond',Georgia,serif;
+    overflow:hidden; height:100%; width:100%;
+    user-select:none; -webkit-user-select:none;
+  }
+  #bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+  /* ── LANG BACK BTN — top-left, title screen only ── */
+  #lang-back-btn {
+    position:fixed; top:9px; left:14px; z-index:23;
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
+    border-radius:6px; color:var(--ash); font-size:16px;
+    width:33px; height:33px; cursor:pointer;
+    display:none; align-items:center; justify-content:center; transition:all 0.2s;
+  }
+  #lang-back-btn:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
+  /* ── MUSIC BTN — always visible, left of pause btn ── */
+  #music-btn {
+    position:fixed; top:9px; right:90px; z-index:23;
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
+    border-radius:6px; color:var(--ash); font-size:16px;
+    width:33px; height:33px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:right 0.3s ease, background 0.2s, color 0.2s;
+  }
+  #music-btn.on-title { right:14px; }
+  #music-btn:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
+  /* ── HOME BTN — visible during game, left of music btn ── */
+  #home-btn {
+    position:fixed; top:9px; right:52px; z-index:23;
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
+    border-radius:6px; color:var(--ash); font-size:16px;
+    width:33px; height:33px; cursor:pointer;
+    display:none; align-items:center; justify-content:center; transition:all 0.2s;
+  }
+  #home-btn:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
+  /* ── CONFIRM MODAL ── */
+  /* ── TITLE SHARE BTN ── */
+  #title-share-btn {
+    position:fixed; top:9px; right:52px; z-index:23;
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
+    border-radius:6px; color:var(--ash); font-size:16px;
+    width:33px; height:33px; cursor:pointer;
+    display:none; align-items:center; justify-content:center; transition:all 0.2s;
+  }
+  #title-share-btn:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
+  #title-share-modal {
+    display:none; position:fixed; inset:0; z-index:55;
+    background:rgba(12,7,3,0.88); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    align-items:center; justify-content:center;
+  }
+  #title-share-modal.show { display:flex; }
+
+  #confirm-modal, #leave-modal {
+    display:none; position:fixed; inset:0; z-index:55;
+    background:rgba(12,7,3,0.88); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    align-items:center; justify-content:center;
+  }
+  #confirm-modal.show, #leave-modal.show { display:flex; }
+  .confirm-box {
+    max-width:300px; width:88%; text-align:center;
+    border:1px solid rgba(232,98,26,0.32); border-radius:14px;
+    background:rgba(22,12,5,0.95); padding:28px 24px;
+  }
+  .confirm-icon { font-size:32px; margin-bottom:10px; display:block; }
+  .confirm-text {
+    font-style:italic; font-size:clamp(13px,3.2vw,15px);
+    color:var(--parch2); line-height:1.6; margin-bottom:20px; letter-spacing:0.03em;
+  }
+  .confirm-btns { display:flex; gap:10px; }
+  .confirm-yes {
+    flex:1; font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(13px,3.5vw,16px); letter-spacing:0.08em;
+    color:#120a04; background:linear-gradient(135deg,var(--fire),var(--ember));
+    border:none; border-radius:7px; padding:10px 14px; cursor:pointer;
+    transition:all 0.2s; box-shadow:0 3px 10px rgba(232,98,26,0.35);
+  }
+  .confirm-yes:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(232,98,26,0.5); }
+  .confirm-no {
+    flex:1; font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(13px,3.5vw,16px); letter-spacing:0.08em;
+    color:var(--ash); background:rgba(255,220,150,0.06);
+    border:1px solid rgba(232,98,26,0.22); border-radius:7px;
+    padding:10px 14px; cursor:pointer; transition:all 0.2s;
+  }
+  .confirm-no:hover { background:rgba(232,98,26,0.12); color:var(--fire); border-color:rgba(232,98,26,0.42); }
+
+  /* ── SCREENS ── */
+  .screen {
+    position:fixed; inset:0; z-index:10;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    transition:opacity 0.7s ease;
+  }
+  .screen.hidden { opacity:0; pointer-events:none; }
+  #input-bar.hidden { display:none !important; }
+  #hud.hidden { display:none !important; }
+
+  /* ── TITLE ── */
+  #title-screen {
+    padding:16px 14px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    align-items:center; justify-content:flex-start; padding-top:20px;
+  }
+  .title-container { max-width:500px; width:100%; text-align:center; }
+
+  .flame-row {
+    font-size:clamp(28px,8vw,44px); line-height:1; margin-bottom:6px;
+    animation:flicker 2.8s ease-in-out infinite alternate;
+    filter:drop-shadow(0 0 14px rgba(232,98,26,0.8)); display:block;
+  }
+  @keyframes flicker {
+    0%   { transform:scaleX(1)    scaleY(1);    filter:drop-shadow(0 0 8px  rgba(232,98,26,0.6)); }
+    33%  { transform:scaleX(.97)  scaleY(1.04); filter:drop-shadow(0 0 16px rgba(245,166,35,0.9)); }
+    66%  { transform:scaleX(1.02) scaleY(.97);  filter:drop-shadow(0 0 11px rgba(232,98,26,0.7)); }
+    100% { transform:scaleX(.98)  scaleY(1.03); filter:drop-shadow(0 0 20px rgba(255,209,102,0.95)); }
+  }
+  .yiddish-title {
+    font-family:'Frank Ruhl Libre',serif; font-weight:900;
+    font-size:clamp(30px,8.5vw,60px); color:var(--fire);
+    text-shadow:0 0 22px rgba(245,166,35,0.7),0 0 55px rgba(232,98,26,0.4),0 2px 6px rgba(0,0,0,0.9);
+    line-height:1.15; direction:rtl;
+  }
+  .latin-title {
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(18px,5vw,28px); color:var(--parch2);
+    margin-top:4px; letter-spacing:0.05em; text-shadow:0 1px 4px rgba(0,0,0,0.7);
+  }
+  .title-tagline {
+    font-style:italic; font-size:clamp(14px,3.3vw,17px);
+    color:var(--parch2); letter-spacing:0.1em; margin-top:5px; margin-bottom:14px;
+  }
+  .verse-strip {
+    font-style:italic; font-size:clamp(14px,3.3vw,17px);
+    color:var(--parch2); line-height:1.65;
+    border-left:2px solid rgba(232,98,26,0.32);
+    padding:7px 12px; margin:0 auto 15px; text-align:left; max-width:320px;
+  }
+
+  /* ── CATEGORIES ── */
+  .categories-panel {
+    background:rgba(255,220,150,0.04); border:1px solid rgba(232,98,26,0.22);
+    border-radius:10px; padding:14px 14px; margin-bottom:16px;
+  }
+  .categories-title {
+    font-style:italic; font-size:clamp(14px,3.2vw,17px); color:var(--parch2);
+    letter-spacing:0.06em; margin-bottom:11px; text-align:center;
+  }
+  .category-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .category-item {
+    display:flex; align-items:flex-start; gap:7px; cursor:pointer;
+    padding:9px 9px; border-radius:7px;
+    border:1px solid rgba(232,98,26,0.16); background:rgba(232,98,26,0.04);
+    transition:all 0.2s ease; min-width:0;
+  }
+  .category-item:hover  { background:rgba(232,98,26,0.10); border-color:rgba(232,98,26,0.38); }
+  .category-item.active { background:rgba(232,98,26,0.13); border-color:rgba(232,98,26,0.52); }
+  .cat-checkbox {
+    width:15px; height:15px; min-width:15px; border:1.5px solid var(--ember2);
+    border-radius:3px; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:all 0.2s;
+  }
+  .category-item.active .cat-checkbox { background:var(--ember2); box-shadow:0 0 7px rgba(245,166,35,0.5); }
+  .cat-check-mark { color:#120a04; font-size:10px; font-weight:900; display:none; }
+  .category-item.active .cat-check-mark { display:block; }
+  .cat-info { flex:1; min-width:0; overflow:visible; }
+  .cat-name { font-size:clamp(15px,3.8vw,18px); color:var(--cream); white-space:normal; overflow:visible; line-height:1.2; }
+  .cat-example {
+    font-family:'Frank Ruhl Libre',serif; font-size:clamp(17px,4.2vw,20px);
+    color:var(--ember2); margin-top:1px; direction:rtl;
+    white-space:normal; overflow:visible;
+  }
+
+  .play-btn {
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(17px,4.5vw,22px); letter-spacing:0.12em;
+    color:#120a04; background:linear-gradient(135deg,var(--fire),var(--ember));
+    border:none; border-radius:7px; padding:13px 36px; cursor:pointer;
+    transition:all 0.25s ease;
+    box-shadow:0 4px 18px rgba(232,98,26,0.45),0 2px 4px rgba(0,0,0,0.5);
+    width:100%; max-width:270px; display:block; margin:0 auto;
+  }
+  .play-btn:hover  { transform:translateY(-2px); box-shadow:0 8px 28px rgba(232,98,26,0.6),0 4px 8px rgba(0,0,0,0.5); }
+  .play-btn:active { transform:translateY(0); }
+  .play-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+  /* ── DIFFICULTY ── */
+  .difficulty-panel {
+    margin-bottom:14px;
+  }
+  .difficulty-title {
+    font-style:italic; font-size:clamp(14px,3.2vw,17px); color:var(--parch2);
+    letter-spacing:0.06em; margin-bottom:10px; text-align:center;
+  }
+  .difficulty-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .diff-btn {
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:10px 6px; border-radius:8px; cursor:pointer;
+    border:1.5px solid rgba(232,98,26,0.22); background:rgba(232,98,26,0.04);
+    transition:all 0.2s ease; font-family:'EB Garamond',serif;
+  }
+  .diff-btn:hover { background:rgba(232,98,26,0.10); border-color:rgba(232,98,26,0.42); }
+  .diff-btn.active { border-color:rgba(232,98,26,0.75); background:rgba(232,98,26,0.15);
+    box-shadow:0 0 14px rgba(232,98,26,0.25); }
+  .diff-emoji { font-size:20px; line-height:1; }
+  .diff-label { font-size:clamp(15px,3.6vw,17px); color:var(--cream); letter-spacing:0.04em; }
+  .diff-desc  { font-style:italic; font-size:clamp(13px,3vw,15px); color:var(--parch2); letter-spacing:0.03em; }
+
+  /* ── SCRIPT TOGGLE ── */
+  .script-panel { margin-bottom:14px; }
+  .script-title {
+    font-style:italic; font-size:clamp(14px,3.2vw,17px); color:var(--parch2);
+    letter-spacing:0.06em; margin-bottom:10px; text-align:center;
+  }
+  .script-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .script-btn {
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding:10px 8px; border-radius:8px; cursor:pointer;
+    border:1.5px solid rgba(232,98,26,0.22); background:rgba(232,98,26,0.04);
+    transition:all 0.2s ease; font-family:'EB Garamond',serif;
+  }
+  .script-btn:hover { background:rgba(232,98,26,0.10); border-color:rgba(232,98,26,0.42); }
+  .script-btn.active { border-color:rgba(232,98,26,0.75); background:rgba(232,98,26,0.15);
+    box-shadow:0 0 14px rgba(232,98,26,0.25); }
+  .script-sample {
+    font-size:clamp(22px,6vw,28px); color:var(--ember2); line-height:1;
+    direction:rtl;
+  }
+  .script-sample.cursive { font-family:'Playpen Sans Hebrew', serif; }
+  .script-label { font-size:clamp(14px,3.5vw,16px); color:var(--cream); letter-spacing:0.04em; }
+  .script-sub   { font-style:italic; font-size:clamp(10px,2.4vw,12px); color:var(--ash); letter-spacing:0.03em; }
+
+
+  .error-msg { color:var(--red); font-style:italic; font-size:12px; margin-top:8px; min-height:18px; text-align:center; }
+  .title-footer { margin-top:12px; font-style:italic; font-size:14px; color:var(--ash); letter-spacing:0.07em; text-align:center; }
+  .credits { margin-top:10px; font-style:italic; font-size:14px; color:var(--ash); letter-spacing:0.06em; text-align:center; }
+  .jvl-logo { width:80px; opacity:0.75; display:block; margin:10px auto 0; transition:opacity 0.3s; }
+  .jvl-logo:hover { opacity:1; }
+
+  /* ── LANGUAGE PICKER ── */
+  #lang-picker-screen {
+    z-index:15;
+    background:#efede6 !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .lang-picker-box {
+    text-align:center;
+    padding:40px 32px 100px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    position:relative;
+  }
+  .lang-picker-img-title {
+    width: min(400px, 82vw);
+    display:block;
+    margin: 0 auto 28px;
+    filter: contrast(1.05);
+    mix-blend-mode: multiply;
+  }
+  .lang-picker-ornament {
+    font-family:'Courier Prime',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.35em;
+    color:#7a6f62;
+    margin-bottom:18px;
+    opacity:0.55;
+  }
+  .lang-picker-btns {
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    width:100%;
+    max-width:240px;
+    border:1.5px solid #1a1209;
+  }
+  .lang-pick-btn {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(13px,3.5vw,15px);
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:#1a1209;
+    background:#f5f3f0;
+    border:none;
+    border-bottom:1.5px solid #1a1209;
+    padding:14px 20px;
+    cursor:pointer;
+    transition:background 0.15s, color 0.15s;
+    width:100%;
+  }
+  .lang-pick-btn:last-child { border-bottom:none; }
+  .lang-pick-btn:hover  { background:#1a1209; color:#f5f3f0; }
+  .lang-pick-btn:active { background:#3a2a1a; color:#f5f3f0; }
+  .lang-picker-notice {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(9px,2vw,11px);
+    color:rgba(26,18,9,0.35);
+    letter-spacing:0.05em;
+    text-align:center;
+    line-height:1.7;
+    margin-top:22px;
+    padding:0 8px;
+  }
+  .lang-picker-footer-logo {
+    width: min(88px, 20vw);
+    margin-top:40px;
+  }
+
+
+  #game-canvas { position:fixed; inset:0; z-index:5; }
+
+  /* ── HUD ── */
+  #hud {
+    position:fixed; top:0; left:0; right:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:9px 16px 7px;
+    background:linear-gradient(to bottom,rgba(12,7,3,0.97) 55%,transparent);
+    pointer-events:none;
+  }
+  .hud-lives { display:flex; gap:4px; align-items:center; }
+  .heart { font-size:18px; transition:all 0.3s; filter:drop-shadow(0 0 5px rgba(220,80,20,0.7)); }
+  .heart.lost { opacity:0.18; filter:none; }
+  .hud-score { font-family:'Courier Prime',monospace; font-weight:700; font-size:clamp(17px,4vw,24px); color:var(--fire); text-shadow:0 0 12px rgba(245,166,35,0.5); }
+  .hud-level { font-style:italic; font-size:clamp(12px,2.6vw,15px); color:var(--parch2); text-align:right; line-height:1.2; padding-right:118px; }
+  .hud-level span { color:var(--fire); font-size:1.25em; font-style:normal; }
+
+  /* Difficulty always shown below pause button */
+  #diff-below {
+    position:fixed; top:46px; right:14px; z-index:22;
+    width:109px; /* spans pause(33) + gap(5) + home(33) + gap(5) + music(33) */
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:11px; color:var(--ash);
+    letter-spacing:0.05em; text-align:center; pointer-events:none;
+  }
+
+  /* ── INPUT BAR ── */
+  #input-bar {
+    position:fixed; bottom:0; left:0; right:0; z-index:20;
+    display:flex; align-items:stretch;
+    padding:9px 11px 10px;
+    background:rgba(12,7,3,0.95);
+  }
+  body.kb-active #input-bar { display:none; }
+  body.kb-active #hint-bar  { bottom:calc(var(--kb-height, 220px) + 8px); }
+  #phonetic-input {
+    flex:1; min-width:0; background:rgba(255,220,150,0.07);
+    border:1.5px solid rgba(232,98,26,0.35); border-radius:7px; color:var(--cream);
+    font-family:'Courier Prime',monospace; font-size:20px; font-weight:700;
+    padding:9px 11px; outline:none; letter-spacing:0.12em; text-align:center;
+    transition:border-color 0.2s,box-shadow 0.2s; caret-color:var(--fire);
+    -webkit-appearance:none; appearance:none;
+  }
+  #phonetic-input::placeholder { color:rgba(139,115,85,0.45); font-style:italic; font-size:clamp(10px,2.8vw,13px); font-weight:400; letter-spacing:0.03em; }
+  #phonetic-input:focus   { border-color:rgba(232,98,26,0.75); box-shadow:0 0 13px rgba(232,98,26,0.18); }
+  #phonetic-input.correct { border-color:var(--green2); box-shadow:0 0 16px rgba(107,156,94,0.4); animation:flashCorrect 0.3s ease; }
+  #phonetic-input.wrong   { border-color:var(--red);    box-shadow:0 0 16px rgba(192,57,43,0.35);  animation:flashWrong   0.3s ease; }
+  @keyframes flashCorrect{0%,100%{background:rgba(255,220,150,0.07)}50%{background:rgba(107,156,94,0.18)}}
+  @keyframes flashWrong  {0%,100%{background:rgba(255,220,150,0.07)}50%{background:rgba(192,57,43,0.15)}}
+
+
+  /* ── CUSTOM KEYBOARD ── */
+  #game-keyboard {
+    position:fixed; bottom:0; left:0; right:0; z-index:22;
+    background:rgba(10,6,2,0.99);
+    border-top:1px solid rgba(232,98,26,0.28);
+    padding:6px 4px;
+    padding-bottom:10px; padding-bottom:max(10px, env(safe-area-inset-bottom));
+    user-select:none; -webkit-user-select:none;
+    box-sizing:border-box;
+  }
+  #kb-display {
+    font-family:'Courier Prime',monospace; font-size:20px; font-weight:700;
+    color:var(--cream); letter-spacing:0.14em; text-align:center;
+    background:rgba(255,220,150,0.07); border:1.5px solid rgba(232,98,26,0.35);
+    border-radius:7px; padding:8px 12px; margin:0 6px 6px;
+    min-height:42px; caret-color:var(--fire);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  #kb-display-text { flex:1; text-align:center; }
+  #kb-display-cursor {
+    width:2px; height:1.2em; background:var(--fire);
+    display:inline-block; margin-left:2px; vertical-align:middle;
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  #kb-rows { display:flex; flex-direction:column; gap:5px; }
+  .kb-row   { display:flex; justify-content:center; gap:4px; padding:0 4px; }
+  .kb-key {
+    height:clamp(38px,7vw,46px);
+    padding:0 2px;
+    background:rgba(255,220,150,0.09); border:1px solid rgba(232,98,26,0.26);
+    border-bottom:3px solid rgba(232,98,26,0.45);
+    border-radius:5px; color:var(--cream); cursor:pointer;
+    font-family:'IBM Plex Mono',monospace; font-weight:700;
+    font-size:clamp(19px,5vw,25px);
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.08s, transform 0.06s;
+    flex:1; max-width:52px;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  .kb-key:active, .kb-key.pressed {
+    background:rgba(232,98,26,0.38); transform:translateY(2px);
+    border-bottom-width:1px;
+  }
+  .kb-key.kb-back {
+    background:rgba(255,220,150,0.05); border-color:rgba(232,98,26,0.22);
+    border-bottom-color:rgba(232,98,26,0.38);
+    flex:1.6; font-size:clamp(15px,4.5vw,20px); color:var(--ash);
+  }
+  .kb-key.kb-back:active { background:rgba(192,57,43,0.35); color:var(--cream); }
+  .kb-key.kb-enter {
+    background:linear-gradient(180deg,rgba(245,166,35,0.25),rgba(232,98,26,0.35));
+    border-color:rgba(232,98,26,0.6); border-bottom-color:rgba(200,70,10,0.8);
+    color:var(--fire); flex:2.4;
+    font-size:clamp(11px,3vw,14px); font-weight:900; letter-spacing:0.1em;
+  }
+  .kb-key.kb-enter:active { background:rgba(232,98,26,0.55); color:var(--cream); transform:translateY(2px); border-bottom-width:1px; }
+  #input-bar.hidden { display:none !important; }
+  #game-keyboard.hidden { display:none !important; }
+
+  /* ── HINT ── */
+  #hint-bar {
+    position:fixed; left:0; right:0; z-index:21; bottom:68px;
+    text-align:center; font-style:italic; font-size:13px;
+    color:rgba(139,115,85,0.82); letter-spacing:0.07em;
+    pointer-events:none; padding:0 16px; display:none;
+  }
+
+  /* ── PAUSE ── */
+  #pause-btn {
+    position:fixed; top:9px; right:14px; z-index:22;
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
+    border-radius:6px; color:var(--ash); font-size:16px;
+    width:33px; height:33px; cursor:pointer;
+    display:none; align-items:center; justify-content:center; transition:all 0.2s;
+  }
+  #pause-btn:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
+  /* keep HUD level label clear of pause + home + music buttons */
+  .hud-level { padding-right:118px; }
+
+  /* ── OVERLAY ── */
+  #overlay-screen { z-index:30; background:rgba(12,7,3,0.93); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .overlay-box {
+    text-align:center; padding:34px 26px;
+    border:1px solid rgba(232,98,26,0.28); border-radius:14px;
+    background:rgba(22,12,5,0.88); max-width:330px; width:90%;
+  }
+  .overlay-emoji  { font-size:clamp(38px,11vw,60px); line-height:1; margin-bottom:6px; }
+  .overlay-title  {
+    font-family:'Frank Ruhl Libre',serif; font-weight:900;
+    font-size:clamp(20px,6vw,30px); margin-bottom:6px; direction:rtl;
+  }
+  .overlay-title.game-over { color:var(--red);  text-shadow:0 0 22px rgba(192,57,43,0.5); }
+  .overlay-title.win       { color:var(--fire); text-shadow:0 0 22px rgba(245,166,35,0.5); }
+  .overlay-subtitle { font-style:italic; font-size:clamp(12px,3vw,15px); color:var(--ash); margin-bottom:20px; line-height:1.55; letter-spacing:0.04em; white-space:pre-line; }
+  .overlay-score       { font-family:'Courier Prime',monospace; font-weight:700; font-size:clamp(32px,9vw,48px); color:var(--fire); margin-bottom:4px; }
+  .overlay-score-label { font-style:italic; font-size:13px; color:var(--ash); letter-spacing:0.1em; margin-bottom:4px; }
+  .overlay-diff-label  { font-style:italic; font-size:12px; color:rgba(139,115,85,0.6); letter-spacing:0.08em; margin-bottom:2px; }
+  .overlay-cats-label  { font-style:italic; font-size:11px; color:rgba(139,115,85,0.45); letter-spacing:0.05em; margin-bottom:18px; line-height:1.5; }
+  .again-btn {
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(14px,3.5vw,18px); letter-spacing:0.1em;
+    color:#120a04; background:linear-gradient(135deg,var(--fire),var(--ember));
+    border:none; border-radius:7px; padding:12px 28px;
+    cursor:pointer; transition:all 0.25s; box-shadow:0 4px 14px rgba(232,98,26,0.38); width:100%;
+  }
+  .again-btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(232,98,26,0.55); }
+
+  /* ── SHARE ── */
+  .share-row {
+    display:none; gap:7px; margin-top:12px; justify-content:center; align-items:center; flex-wrap:wrap;
+  }
+  .share-row.show { display:flex; }
+  .share-label {
+    font-style:italic; font-size:clamp(11px,2.5vw,13px);
+    color:var(--ash); letter-spacing:0.07em; margin-bottom:6px;
+  }
+  .share-section { margin-top:10px; margin-bottom:16px; }
+  .share-btn {
+    display:flex; align-items:center; justify-content:center; gap:5px;
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(13px,3.2vw,15px); letter-spacing:0.06em;
+    border:1px solid rgba(232,98,26,0.35); border-radius:7px;
+    padding:8px 12px; cursor:pointer; transition:all 0.2s;
+    background:rgba(255,220,150,0.06); color:var(--parch2);
+    text-decoration:none; flex:1;
+  }
+  .share-btn:hover { background:rgba(232,98,26,0.15); border-color:rgba(232,98,26,0.6); color:var(--fire); }
+  .share-btn svg { width:15px; height:15px; fill:currentColor; flex-shrink:0; }
+  .copy-confirm {
+    font-style:italic; font-size:11px; color:var(--green2);
+    margin-top:5px; min-height:16px; text-align:center; letter-spacing:0.05em;
+  }
+
+  /* ── EASTER EGG ── */
+  #easter-egg {
+    display:none; position:fixed; inset:0; z-index:60;
+    background:rgba(12,7,3,0.88); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    align-items:center; justify-content:center; padding:28px;
+  }
+  #easter-egg.show { display:flex; }
+  .ee-box {
+    max-width:340px; width:100%;
+    border:1px solid rgba(232,98,26,0.35); border-radius:14px;
+    background:rgba(28,14,5,0.95); padding:30px 26px; text-align:center;
+  }
+  .ee-photo { width:100px; height:100px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 16px; border:2px solid rgba(232,98,26,0.4); box-shadow:0 0 18px rgba(232,98,26,0.25); }
+  .ee-text {
+    font-style:italic; font-size:clamp(13px,3.2vw,15.5px);
+    color:var(--parch2); line-height:1.7; letter-spacing:0.03em;
+  }
+  .ee-close {
+    margin-top:22px; font-family:'EB Garamond',serif; font-style:italic;
+    font-size:14px; color:var(--ash);
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.22);
+    border-radius:6px; padding:8px 22px; cursor:pointer; transition:all 0.2s;
+  }
+  .ee-close:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
+  /* ── FX ── */
+  .particle { position:fixed; pointer-events:none; z-index:25; animation:particleFade 0.75s ease-out forwards; }
+  @keyframes particleFade { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-55px) scale(1.5)} }
+  .score-pop { position:fixed; pointer-events:none; z-index:25; font-family:'Courier Prime',monospace; font-weight:700; color:var(--fire); text-shadow:0 0 10px rgba(245,166,35,0.7); animation:scorePop 0.85s ease-out forwards; font-size:19px; }
+  @keyframes scorePop { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-65px) scale(0.7)} }
+
+  /* ── MOBILE ── */
+  @media (max-width:480px) {
+    #title-screen     { padding:10px 10px; padding-top:14px; }
+    .yiddish-title    { font-size:clamp(22px,9vw,36px); }
+    .latin-title      { font-size:clamp(13px,4vw,18px); }
+    .title-tagline    { font-size:11px; margin-bottom:10px; }
+    .verse-strip      { font-size:11px; padding:6px 9px; margin-bottom:10px; }
+    .categories-panel { padding:10px 9px; margin-bottom:12px; }
+    .categories-title { font-size:14px; margin-bottom:8px; }
+    .category-grid    { gap:6px; }
+    .category-item    { padding:7px 7px; gap:5px; }
+    .cat-checkbox     { width:14px; height:14px; min-width:14px; }
+    .cat-name         { font-size:14px; }
+    .cat-example      { font-size:15px; }
+    .play-btn         { font-size:14px; padding:11px 24px; }
+    #hud              { padding:6px 12px 5px; }
+    .heart            { font-size:15px; }
+    .hud-score        { font-size:16px; }
+    #input-bar        { padding:7px 9px 11px; gap:7px; }
+    #phonetic-input   { font-size:18px; padding:8px 9px; }
+    #hint-bar         { bottom:60px; font-size:11px; }
+    #music-btn        { right:88px; width:30px; height:30px; font-size:14px; top:8px; }
+    #music-btn.on-title { right:8px; }
+    #title-share-btn  { right:46px; width:30px; height:30px; top:8px; }
+    #home-btn         { right:50px; width:30px; height:30px; font-size:14px; top:8px; }
+    #lang-back-btn    { left:8px; width:30px; height:30px; font-size:14px; top:8px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- Fade overlay -->
+<div id="fade-overlay" style="position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:9999;"></div>
+
+<!-- Music button: always visible -->
+<button id="music-btn" onclick="toggleMusic()" tabindex="-1" title="Música / Music">🎵</button>
+
+<!-- Share button: title screen only -->
+<button id="title-share-btn" onclick="openTitleShare()" tabindex="-1" title="Compartir / Share">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+</button>
+
+<!-- Back to language picker button: title screen only -->
+<button id="lang-back-btn" onclick="goToLangPicker()" tabindex="-1" title="Cambiar idioma / Change language">🌐</button>
+
+<!-- LANGUAGE PICKER SCREEN -->
+<div class="screen" id="lang-picker-screen">
+  <div class="lang-picker-box">
+    <img class="lang-picker-img-title" src="titulo.png" alt="Oyfn Pripetshik - Dos Shpil">
+    <div class="lang-picker-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <div class="lang-picker-btns">
+      <button class="lang-pick-btn" onclick="pickLang('es')">Español</button>
+      <button class="lang-pick-btn" onclick="pickLang('pt')">Português</button>
+      <button class="lang-pick-btn" onclick="pickLang('en')">English</button>
+    </div>
+    <div class="lang-picker-notice">
+      Se recomienda abrir en el navegador web<br>
+      Recomenda-se abrir no navegador web<br>
+      Best opened in a web browser
+    </div>
+    <img class="lang-picker-footer-logo" src="logolapiz.png" alt="Jevel">
+  </div>
+</div>
+
+<!-- TITLE SCREEN -->
+<div class="screen hidden" id="title-screen">
+  <div class="title-container">
+    <span class="flame-row" id="flame-btn"
+      onmousedown="flamePress()" onmouseup="flameRelease()" onmouseleave="flameRelease()"
+      ontouchstart="flamePress(event)" ontouchend="flameRelease()" ontouchcancel="flameRelease()"
+      style="cursor:pointer;" title="...">🔥</span>
+    <div class="yiddish-title">אויפֿן פּריפּעטשיק</div>
+    <div class="latin-title">Oyfn Pripetshik</div>
+    <div class="title-tagline" id="t-tagline">El Juego · דאָס שפּיל</div>
+
+    <div class="verse-strip" id="t-verse">
+      "Repitan una y otra vez -<br>
+      <em>komets-alef: 'o'.</em>"
+    </div>
+
+    <div class="categories-panel">
+      <div class="categories-title" id="t-cat-title">Elegí tus letras — קלײַב אויס</div>
+      <div class="category-grid">
+        <div class="category-item active" data-cat="vowels" onclick="toggleCat(this)">
+          <div class="cat-checkbox"><span class="cat-check-mark">✓</span></div>
+          <div class="cat-info">
+            <div class="cat-name" id="cn-vowels">Vocales</div>
+            <div class="cat-example">אַ אָ ע י ו</div>
+          </div>
+        </div>
+        <div class="category-item active" data-cat="diphthongs" onclick="toggleCat(this)">
+          <div class="cat-checkbox"><span class="cat-check-mark">✓</span></div>
+          <div class="cat-info">
+            <div class="cat-name" id="cn-diphthongs">Diptongos</div>
+            <div class="cat-example">ײ ײַ ױ</div>
+          </div>
+        </div>
+        <div class="category-item active" data-cat="consonants" onclick="toggleCat(this)">
+          <div class="cat-checkbox"><span class="cat-check-mark">✓</span></div>
+          <div class="cat-info">
+            <div class="cat-name" id="cn-consonants">Consonantes</div>
+            <div class="cat-example">ב ש ק מ</div>
+          </div>
+        </div>
+        <div class="category-item active" data-cat="clusters" onclick="toggleCat(this)">
+          <div class="cat-checkbox"><span class="cat-check-mark">✓</span></div>
+          <div class="cat-info">
+            <div class="cat-name" id="cn-clusters">Grupos de consonantes</div>
+            <div class="cat-example">דזש זש טש</div>
+          </div>
+        </div>
+        <div class="category-item active" data-cat="finals" onclick="toggleCat(this)">
+          <div class="cat-checkbox"><span class="cat-check-mark">✓</span></div>
+          <div class="cat-info">
+            <div class="cat-name" id="cn-finals">Finales</div>
+            <div class="cat-example">ם ן ף ץ</div>
+          </div>
+        </div>
+        <div class="category-item active" data-cat="loshnkoydesh" onclick="toggleCat(this)">
+          <div class="cat-checkbox"><span class="cat-check-mark">✓</span></div>
+          <div class="cat-info">
+            <div class="cat-name" id="cn-loshnkoydesh">Loshn-Koydesh</div>
+            <div class="cat-example">בֿ ח שׂ ת</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="script-panel">
+      <div class="script-title" id="t-script-title">Tipografía — שריפֿט</div>
+      <div class="script-grid">
+        <div class="script-btn active" id="script-print" onclick="setScript('print')">
+          <span class="script-sample">אבגד</span>
+          <span class="script-label" id="sn-print">Imprenta</span>
+          <span class="script-sub"   id="ss-print">Cuadrada</span>
+        </div>
+        <div class="script-btn" id="script-cursive" onclick="setScript('cursive')">
+          <span class="script-sample cursive">אבגד</span>
+          <span class="script-label" id="sn-cursive">Cursiva</span>
+          <span class="script-sub"   id="ss-cursive">Yidish-khtav</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="difficulty-panel">
+      <div class="difficulty-title" id="t-diff-title">Dificultad — שווערקייט</div>
+      <div class="difficulty-grid">
+        <div class="diff-btn" id="diff-easy" onclick="setDifficulty('easy')">
+          <span class="diff-emoji">🕯️</span>
+          <span class="diff-label" id="dn-easy">Fácil</span>
+          <span class="diff-desc"  id="dd-easy">Lento</span>
+        </div>
+        <div class="diff-btn active" id="diff-medium" onclick="setDifficulty('medium')">
+          <span class="diff-emoji">🔥</span>
+          <span class="diff-label" id="dn-medium">Medio</span>
+          <span class="diff-desc"  id="dd-medium">Normal</span>
+        </div>
+        <div class="diff-btn" id="diff-hard" onclick="setDifficulty('hard')">
+          <span class="diff-emoji">⚡</span>
+          <span class="diff-label" id="dn-hard">Difícil</span>
+          <span class="diff-desc"  id="dd-hard">Rápido</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="play-btn" id="play-btn" onclick="startGame()">▶ Shpil — שפּיל</button>
+    <div class="error-msg" id="error-msg"></div>
+    <div class="title-footer" id="t-footer">Escribí el sonido fonético para atrapar cada letra</div>
+    <img class="jvl-logo" onclick="confirmLeave()" style="cursor:pointer;" src="image0.png" alt="Jevel">
+    <div class="credits" id="t-credits">Creado por el sello fonográfico Jevel. Argentina.</div>
+  </div>
+</div>
+
+<!-- Game -->
+<canvas id="game-canvas"></canvas>
+
+<div id="hud" class="hidden">
+  <div class="hud-lives" id="lives-display"></div>
+  <div class="hud-score"  id="score-display">0</div>
+  <div class="hud-level"  id="level-display"></div>
+</div>
+
+<div id="hint-bar"></div>
+
+<div id="input-bar" class="hidden">
+  <input type="text" id="phonetic-input" placeholder="Escribí acá y presioná enter..."
+    autocomplete="off" autocorrect="off" autocapitalize="none"
+    spellcheck="false" inputmode="none">
+</div>
+
+<!-- Custom in-game keyboard -->
+<div id="game-keyboard" class="hidden">
+  <div id="kb-display"><span id="kb-display-text"></span><span id="kb-display-cursor"></span></div>
+  <div id="kb-rows"></div>
+</div>
+
+<button id="pause-btn" onclick="togglePause()" tabindex="-1">⏸</button>
+<div id="diff-below"></div>
+<button id="home-btn"  onclick="confirmHome()" tabindex="-1" title="Inicio / Home">🏠</button>
+
+<!-- Confirm home modal -->
+<div id="confirm-modal">
+  <div class="confirm-box">
+    <span class="confirm-icon">🏠</span>
+    <div class="confirm-text" id="confirm-text">¿Abandonar la partida y volver al inicio?</div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="confirm-yes" onclick="confirmYes()">Sí, salir</button>
+      <button class="confirm-no"  id="confirm-no"  onclick="confirmNo()">Seguir jugando</button>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="screen hidden" id="overlay-screen">
+  <div class="overlay-box">
+    <div class="overlay-emoji"    id="overlay-emoji"></div>
+    <div class="overlay-title"    id="overlay-title"></div>
+    <div class="overlay-subtitle" id="overlay-subtitle"></div>
+    <div class="overlay-score"    id="overlay-score"></div>
+    <div class="overlay-score-label">ניקוד · score</div>
+    <div class="overlay-diff-label" id="overlay-diff-label"></div>
+    <div class="overlay-cats-label" id="overlay-cats-label"></div>
+    <div class="share-section" id="share-section" style="display:none;">
+      <div class="share-label" id="share-label"></div>
+      <div class="share-row show">
+        <button class="share-btn" onclick="shareWhatsApp()">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.859L.057 23.571a.5.5 0 00.613.613l5.712-1.475A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-5.013-1.378l-.36-.214-3.733.964.991-3.617-.235-.372A9.818 9.818 0 012.182 12C2.182 6.575 6.575 2.182 12 2.182S21.818 6.575 21.818 12 17.425 21.818 12 21.818z"/></svg>
+          WhatsApp
+        </button>
+        <button class="share-btn" onclick="shareEmail()">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Email
+        </button>
+      </div>
+    </div>
+    <button class="again-btn" id="again-btn" onclick="returnToTitle()"></button>
+  </div>
+</div>
+
+<!-- Leave site modal -->
+<div id="leave-modal">
+  <div class="confirm-box">
+    <span class="confirm-icon">🌐</span>
+    <div class="confirm-text" id="leave-text">¿Querés ir a jeveldiscos.com?</div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="leave-yes" onclick="confirmLeaveYes()">Ir al sitio</button>
+      <button class="confirm-no"  id="leave-no"  onclick="confirmLeaveNo()">Quedarse</button>
+    </div>
+  </div>
+</div>
+
+<!-- Title share modal -->
+<div id="title-share-modal">
+  <div class="confirm-box">
+    <span class="confirm-icon">🔥</span>
+    <div class="confirm-text" id="title-share-text">¿Querés contarles del juego a tus amigos?</div>
+    <div class="confirm-btns" style="margin-top:4px;">
+      <button class="confirm-yes" onclick="shareWhatsApp()" style="display:flex;align-items:center;gap:6px;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.859L.057 23.571a.5.5 0 00.613.613l5.712-1.475A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-5.013-1.378l-.36-.214-3.733.964.991-3.617-.235-.372A9.818 9.818 0 012.182 12C2.182 6.575 6.575 2.182 12 2.182S21.818 6.575 21.818 12 17.425 21.818 12 21.818z"/></svg>
+        WhatsApp
+      </button>
+      <button class="confirm-yes" onclick="shareEmail()" style="display:flex;align-items:center;gap:6px;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email
+      </button>
+    </div>
+    <button class="confirm-no" style="width:100%;margin-top:8px;" onclick="closeTitleShare()" id="title-share-close">Cerrar</button>
+  </div>
+</div>
+
+<!-- Easter egg -->
+<div id="easter-egg">
+  <div class="ee-box">
+    <img class="ee-photo" src="image1.jpg" alt="Rafael Golwaser">
+    <div class="ee-text">Dedicado con cariño a<br>Rafael Golwaser<br>que me enseñó las letras.<br><br>Julián Brenlle</div>
+    <button class="ee-close" onclick="closeEasterEgg()">cerrar</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// AUDIO — embedded base64 mp3
+// ══════════════════════════════════════════
+const AUDIO_SRC = 'music.mp3';
+let music = null;
+let musicOn = true;
+
+function initMusic() {
+  music = new Audio(AUDIO_SRC);
+  music.loop = true;
+  music.volume = 0.55;
+  music.play().catch(() => {
+    // Autoplay blocked — start on very first user interaction of any kind
+    const unlock = () => {
+      if (musicOn) music.play().catch(()=>{});
+    };
+    document.addEventListener('pointerdown', unlock, { once: true });
+    document.addEventListener('keydown',     unlock, { once: true });
+  });
+}
+
+function toggleMusic() {
+  musicOn = !musicOn;
+  const btn = document.getElementById('music-btn');
+  if (!music) return;
+  if (musicOn) {
+    music.play().catch(()=>{});
+    btn.textContent = '🎵';
+    btn.title = 'Apagar música / Mute music';
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    btn.title = 'Encender música / Play music';
+  }
+}
+
+// ══════════════════════════════════════════
+// I18N
+// ══════════════════════════════════════════
+let lang = 'es'; // default: Spanish
+
+const T = {
+  es: {
+    tagline:      'El Juego · דאָס שפּיל',
+    verse:        '"Repitan una y otra vez -<br><em>komets-alef: \'o\'.</em>"',
+    catTitle:     'Elegí tus letras - קלײַב אויס',
+    vowels:       'Vocales',
+    diphthongs:   'Diptongos',
+    consonants:   'Consonantes',
+    clusters:     'Grupos de consonantes',
+    loshnkoydesh: 'Loshn-Koydesh',
+    finals:       'Finales',
+    footer:       'Escribí el sonido fonético para atrapar cada letra',
+    credits:      'Creado por el sello fonográfico Jevel. Argentina.',
+    placeholder:  'Escribí acá y presioná enter...',
+    errorEmpty:   'Por favor seleccioná al menos una categoría.',
+    hudLevel:     (n) => `Nivel<br><span>${n}</span>`,
+    hintMatch:    (t,l) => `"${t}" → ${l} - ¡no aparece todavía!`,
+    hintNoMatch:  (t) => `"${t}" no coincide con ninguna letra`,
+    winTitle:     'ברכות!',
+    winEmoji:     '🕯️',
+    winSub:       '¡Felicitaciones - mantuviste el fuego vivo!',
+    loseEmoji:    '🕯️',
+    loseSub:      '¿Probamos de nuevo?',
+    backToTitle:  '← Volver al inicio',
+    shareLabel:   '¿Te gustó? ¡Invitá a alguien!',
+    shareText:    () => `Recién estuve jugando el juego de Oyfn Pripetshik\nLo recomiendo\nwww.jeveldiscos.com/oyfnpripetshik.html`,
+    langBtn:      'EN',
+    diffPrefix:   'Dificultad: ',
+    diffTitle:    'Dificultad — שווערקייט',
+    easyLabel:    'Fácil',   easyDesc:   'Lento',
+    medLabel:     'Medio',   medDesc:    'Normal',
+    hardLabel:    'Difícil', hardDesc:   'Rápido',
+    confirmText:  '¿Abandonar la partida y volver al inicio?',
+    confirmYes:   'Sí, salir',
+    confirmNo:    'Seguir jugando',
+    titleShareLabel: '¿Querés contarles del juego a tus amigos?',
+    leaveText:    '¿Querés ir a jeveldiscos.com?',
+    leaveYes:     'Ir al sitio',
+    leaveNo:      'Volver',
+    scriptTitle:  'Tipografía — שריפֿט',
+    printLabel:   'Imprenta',   printSub:   'Cuadrada',
+    cursiveLabel: 'Cursiva',    cursiveSub: 'Yidish-khtav',
+  },
+  pt: {
+    tagline:      'O Jogo · דאָס שפּיל',
+    verse:        '"Repitam uma e outra vez -<br><em>komets-alef: \'o\'.</em>"',
+    catTitle:     'Escolha suas letras - קלײַב אויס',
+    vowels:       'Vogais',
+    diphthongs:   'Ditongos',
+    consonants:   'Consoantes',
+    clusters:     'Grupos de consoantes',
+    loshnkoydesh: 'Loshn-Koydesh',
+    finals:       'Finais',
+    footer:       'Digite o som fonético para pegar cada letra',
+    credits:      'Criado pelo selo fonográfico Jevel. Argentina.',
+    placeholder:  'Escreva aqui e pressione enter...',
+    errorEmpty:   'Por favor, selecione pelo menos uma categoria.',
+    hudLevel:     (n) => `Nível<br><span>${n}</span>`,
+    hintMatch:    (t,l) => `"${t}" → ${l} - ainda não apareceu!`,
+    hintNoMatch:  (t) => `"${t}" não corresponde a nenhuma letra`,
+    winTitle:     'ברכות!',
+    winEmoji:     '🕯️',
+    winSub:       'Parabéns - você manteve o fogo aceso!',
+    loseEmoji:    '🕯️',
+    loseSub:      'Tentamos de novo?',
+    backToTitle:  '← Voltar ao início',
+    shareLabel:   'Gostou? Convida alguém!',
+    shareText:    () => `Acabei de jogar Oyfn Pripetshik\nRecomendo muito\nwww.jeveldiscos.com/oyfnpripetshik.html`,
+    langBtn:      'PT',
+    diffPrefix:   'Dificuldade: ',
+    diffTitle:    'Dificuldade — שווערקייט',
+    easyLabel:    'Fácil',   easyDesc:   'Lento',
+    medLabel:     'Médio',   medDesc:    'Normal',
+    hardLabel:    'Difícil', hardDesc:   'Rápido',
+    confirmText:  'Abandonar a partida e voltar ao início?',
+    confirmYes:   'Sim, sair',
+    confirmNo:    'Continuar jogando',
+    titleShareLabel: 'Quer contar para os seus amigos sobre o jogo?',
+    leaveText:    'Quer ir para jeveldiscos.com?',
+    leaveYes:     'Ir ao site',
+    leaveNo:      'Voltar',
+    scriptTitle:  'Tipografia — שריפֿט',
+    printLabel:   'Imprensa',   printSub:   'Quadrada',
+    cursiveLabel: 'Cursiva',    cursiveSub: 'Yidish-khtav',
+  },
+  pt: {
+    tagline:      'O Jogo · דאָס שפּיל',
+    verse:        '"Repitam uma e outra vez -<br><em>komets-alef: \'o\'.</em>"',
+    catTitle:     'Escolha suas letras - קלײַב אויס',
+    vowels:       'Vogais',
+    diphthongs:   'Ditongos',
+    consonants:   'Consoantes',
+    clusters:     'Grupos de consoantes',
+    loshnkoydesh: 'Loshn-Koydesh',
+    finals:       'Finais',
+    footer:       'Digite o som fonético para pegar cada letra',
+    credits:      'Criado pelo selo fonográfico Jevel. Argentina.',
+    placeholder:  'Escreva aqui e pressione enter...',
+    errorEmpty:   'Por favor, selecione pelo menos uma categoria.',
+    hudLevel:     (n) => `Nível<br><span>${n}</span>`,
+    hintMatch:    (t,l) => `"${t}" → ${l} - ainda não apareceu!`,
+    hintNoMatch:  (t) => `"${t}" não corresponde a nenhuma letra`,
+    winTitle:     'ברכות!',
+    winEmoji:     '🕯️',
+    winSub:       'Parabéns - você manteve o fogo aceso!',
+    loseEmoji:    '🕯️',
+    loseSub:      'Tentamos de novo?',
+    backToTitle:  '← Voltar ao início',
+    diffPrefix:   'Dificuldade: ',
+    diffTitle:    'Dificuldade — שווערקייט',
+    easyLabel:    'Fácil',   easyDesc:   'Lento',
+    medLabel:     'Médio',   medDesc:    'Normal',
+    hardLabel:    'Difícil', hardDesc:   'Rápido',
+    confirmText:  'Abandonar a partida e voltar ao início?',
+    confirmYes:   'Sim, sair',
+    confirmNo:    'Continuar jogando',
+    titleShareLabel: 'Quer contar para os seus amigos sobre o jogo?',
+    leaveText:    'Quer ir para jeveldiscos.com?',
+    leaveYes:     'Ir ao site',
+    leaveNo:      'Voltar',
+    scriptTitle:  'Tipografia — שריפֿט',
+    printLabel:   'Imprensa',   printSub:   'Quadrada',
+    cursiveLabel: 'Cursiva',    cursiveSub: 'Yidish-khtav',
+  },
+  en: {
+    tagline:      'The Game · דאָס שפּיל',
+    verse:        '"Say it again and again -<br><em>komets-alef: \'o\'.</em>"',
+    catTitle:     'Choose your letters - קלײַב אויס',
+    vowels:       'Vowels',
+    diphthongs:   'Diphthongs',
+    consonants:   'Consonants',
+    clusters:     'Consonant clusters',
+    loshnkoydesh: 'Loshn-Koydesh',
+    finals:       'Finals',
+    footer:       'Type the phonetic sound to catch each falling letter',
+    credits:      'Created by Jevel record label. Argentina.',
+    placeholder:  'Type here and press enter...',
+    errorEmpty:   'Please select at least one category.',
+    hudLevel:     (n) => `Level<br><span>${n}</span>`,
+    hintMatch:    (t,l) => `"${t}" → ${l} - not on screen yet`,
+    hintNoMatch:  (t) => `"${t}" doesn't match any letter`,
+    winTitle:     'ברכות!',
+    winEmoji:     '🕯️',
+    winSub:       'Congratulations - you kept the fire alive!',
+    loseEmoji:    '🕯️',
+    loseSub:      'Ready to try again?',
+    backToTitle:  '← Back to Title',
+    shareLabel:   'Enjoyed it? Invite someone!',
+    shareText:    () => `I just played the Oyfn Pripetshik game\nHighly recommend it\nwww.jeveldiscos.com/oyfnpripetshik.html`,
+    langBtn:      'ES',
+    diffPrefix:   'Difficulty: ',
+    diffTitle:    'Difficulty — שווערקייט',
+    easyLabel:    'Easy',   easyDesc:   'Slow',
+    medLabel:     'Medium', medDesc:    'Normal',
+    hardLabel:    'Hard',   hardDesc:   'Fast',
+    confirmText:  'Abandon the game and return to the title?',
+    confirmYes:   'Yes, quit',
+    confirmNo:    'Keep playing',
+    titleShareLabel: 'Want to tell your friends about the game?',
+    leaveText:    'Do you want to go to jeveldiscos.com?',
+    leaveYes:     'Go to site',
+    leaveNo:      'Go back',
+    scriptTitle:  'Script — שריפֿט',
+    printLabel:   'Print',      printSub:   'Square',
+    cursiveLabel: 'Cursive',    cursiveSub: 'Yidish-khtav',
+  }
+};
+
+function applyLang() {
+  const t = T[lang];
+  document.getElementById('t-tagline').textContent   = t.tagline;
+  document.getElementById('t-verse').innerHTML        = t.verse;
+  document.getElementById('t-cat-title').textContent  = t.catTitle;
+  document.getElementById('cn-vowels').textContent    = t.vowels;
+  document.getElementById('cn-diphthongs').textContent= t.diphthongs;
+  document.getElementById('cn-consonants').textContent= t.consonants;
+  document.getElementById('cn-clusters').textContent  = t.clusters;
+  document.getElementById('cn-loshnkoydesh').textContent= t.loshnkoydesh;
+  document.getElementById('cn-finals').textContent    = t.finals;
+  document.getElementById('t-footer').textContent     = t.footer;
+  document.getElementById('t-credits').textContent    = t.credits;
+  document.getElementById('phonetic-input').placeholder = t.placeholder;
+  document.getElementById('t-diff-title').textContent = t.diffTitle;
+  document.getElementById('dn-easy').textContent      = t.easyLabel;
+  document.getElementById('dd-easy').textContent      = t.easyDesc;
+  document.getElementById('dn-medium').textContent    = t.medLabel;
+  document.getElementById('dd-medium').textContent    = t.medDesc;
+  document.getElementById('dn-hard').textContent      = t.hardLabel;
+  document.getElementById('dd-hard').textContent      = t.hardDesc;
+  document.getElementById('confirm-text').textContent = t.confirmText;
+  document.getElementById('confirm-yes').textContent  = t.confirmYes;
+  document.getElementById('confirm-no').textContent   = t.confirmNo;
+  document.getElementById('t-script-title').textContent = t.scriptTitle;
+  document.getElementById('sn-print').textContent     = t.printLabel;
+  document.getElementById('ss-print').textContent     = t.printSub;
+  document.getElementById('sn-cursive').textContent   = t.cursiveLabel;
+  document.getElementById('ss-cursive').textContent   = t.cursiveSub;
+  document.getElementById('error-msg').textContent    = '';
+  if (gameRunning) updateHUD();
+}
+
+function pickLang(l) {
+  lang = l;
+  applyLang();
+  // Asegurar que la música arranca con el primer click del usuario
+  if (music && musicOn) music.play().catch(() => {});
+  const overlay = document.getElementById('fade-overlay');
+  const pickerScreen = document.getElementById('lang-picker-screen');
+  const titleScreen = document.getElementById('title-screen');
+
+  // 1. Fade to black
+  overlay.style.transition = 'opacity 0.7s ease';
+  overlay.style.opacity = '1';
+
+  overlay.addEventListener('transitionend', function onBlack() {
+    overlay.removeEventListener('transitionend', onBlack);
+
+    // 2. Swap instantáneo — desactivar transiciones de .screen
+    pickerScreen.style.transition = 'none';
+    titleScreen.style.transition = 'none';
+    titleScreen.style.opacity = '1';
+
+    pickerScreen.style.display = 'none';
+    titleScreen.style.display = 'flex';
+    titleScreen.classList.remove('hidden');
+    document.getElementById('lang-back-btn').style.display = 'flex';
+    document.getElementById('title-share-btn').style.display = 'flex';
+
+    // 3. Fade in cuando el browser pintó el title screen
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      overlay.style.transition = 'opacity 0.8s ease';
+      overlay.style.opacity = '0';
+    }));
+  }, { once: true });
+}
+
+function openTitleShare() {
+  const t = T[lang];
+  document.getElementById('title-share-text').textContent = t.titleShareLabel;
+  document.getElementById('title-share-close').textContent = t.leaveNo;
+  document.getElementById('title-share-modal').classList.add('show');
+}
+
+function closeTitleShare() {
+  document.getElementById('title-share-modal').classList.remove('show');
+}
+
+function goToLangPicker() {
+  const overlay = document.getElementById('fade-overlay');
+  const pickerScreen = document.getElementById('lang-picker-screen');
+  const titleScreen = document.getElementById('title-screen');
+
+  // 1. Fade to black
+  overlay.style.transition = 'opacity 0.7s ease';
+  overlay.style.opacity = '1';
+
+  overlay.addEventListener('transitionend', function onBlack() {
+    overlay.removeEventListener('transitionend', onBlack);
+
+    // 2. Swap instantáneo — desactivar transiciones de .screen para que no se vea
+    pickerScreen.style.transition = 'none';
+    titleScreen.style.transition = 'none';
+    pickerScreen.style.opacity = '1';
+
+    titleScreen.style.display = 'none';
+    titleScreen.classList.add('hidden');
+    pickerScreen.style.display = 'flex';
+    pickerScreen.classList.remove('hidden');
+    document.getElementById('lang-back-btn').style.display = 'none';
+    document.getElementById('title-share-btn').style.display = 'none';
+
+    // 3. Fade in cuando el browser pintó el picker
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      overlay.style.transition = 'opacity 0.8s ease';
+      overlay.style.opacity = '0';
+    }));
+  }, { once: true });
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const LETTER_DATA = {
+  vowels:     [{letter:'אַ',phonetic:'a'},{letter:'אָ',phonetic:'o'},{letter:'ע',phonetic:'e'},{letter:'י',phonetic:'i'},{letter:'ו',phonetic:'u'}],
+  diphthongs: [{letter:'ײ',phonetic:'ey'},{letter:'ײַ',phonetic:'ay'},{letter:'ױ',phonetic:'oy'}],
+  consonants: [
+    {letter:'ב',phonetic:'b'},{letter:'ג',phonetic:'g'},{letter:'ד',phonetic:'d'},
+    {letter:'ה',phonetic:'h'},{letter:'ו',phonetic:'v'},{letter:'װ',phonetic:'v'},{letter:'ז',phonetic:'z'},
+    {letter:'ט',phonetic:'t'},{letter:'י',phonetic:'y'},
+    {letter:'כ',phonetic:'kh'},{letter:'ל',phonetic:'l'},{letter:'מ',phonetic:'m'},{letter:'נ',phonetic:'n'},
+    {letter:'ס',phonetic:'s'},{letter:'פּ',phonetic:'p'},{letter:'פֿ',phonetic:'f'},{letter:'צ',phonetic:'ts'},
+    {letter:'ק',phonetic:'k'},{letter:'ר',phonetic:'r'},{letter:'ש',phonetic:'sh'},
+  ],
+  clusters: [
+    {letter:'דזש',phonetic:'j'},{letter:'זש',phonetic:'g'},{letter:'טש',phonetic:'ch'},
+  ],
+  loshnkoydesh: [
+    {letter:'בֿ',phonetic:'v'},{letter:'ח',phonetic:'kh'},{letter:'כּ',phonetic:'k'},
+    {letter:'שׂ',phonetic:'s'},{letter:'תּ',phonetic:'t'},{letter:'ת',phonetic:'s'},
+  ],
+  finals: [{letter:'ם',phonetic:'m'},{letter:'ן',phonetic:'n'},{letter:'ף',phonetic:'f'},{letter:'ץ',phonetic:'ts'}],
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let selectedCats  = new Set(['vowels','diphthongs','consonants','clusters','finals','loshnkoydesh']);
+let difficulty    = 'medium'; // 'easy' | 'medium' | 'hard'
+let scriptStyle   = 'print';  // 'print' | 'cursive'
+let activeLetters = [];
+let score=0, lives=5, level=1;
+let gameRunning=false, paused=false;
+let spawnTimer=0, levelTimer=0;
+let animFrame=null, lastTime=0;
+let pool=[], hintTimeout=null;
+let visibleHeight = window.innerHeight;
+
+const canvas   = document.getElementById('game-canvas');
+const ctx      = canvas.getContext('2d');
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx    = bgCanvas.getContext('2d');
+
+// ══════════════════════════════════════════
+// VIEWPORT / KEYBOARD
+// ══════════════════════════════════════════
+function updateVisibleHeight() {
+  visibleHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+}
+function repositionInputBar() {
+  const bar=document.getElementById('input-bar'), hint=document.getElementById('hint-bar');
+  if (!bar) return;
+  if (window.visualViewport) {
+    const vv=window.visualViewport;
+    const gap=window.innerHeight-(vv.offsetTop+vv.height);
+    bar.style.bottom=gap+'px';
+    if (hint) hint.style.bottom=(gap+58)+'px';
+  } else { bar.style.bottom='0'; }
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', ()=>{
+    if (!gameRunning) { updateVisibleHeight(); repositionInputBar(); }
+  });
+  window.visualViewport.addEventListener('scroll', ()=>{
+    if (!gameRunning) { updateVisibleHeight(); repositionInputBar(); }
+  });
+}
+updateVisibleHeight();
+
+function resizeCanvas() {
+  canvas.width=bgCanvas.width=window.innerWidth;
+  canvas.height=bgCanvas.height=window.innerHeight;
+  updateVisibleHeight();
+}
+window.addEventListener('resize', () => { if (!gameRunning) resizeCanvas(); });
+resizeCanvas();
+
+// ══════════════════════════════════════════
+// FIRE / EMBER BACKGROUND
+// ══════════════════════════════════════════
+let fireT=0;
+const embers=[];
+function resetEmber(e) {
+  const W=bgCanvas.width, H=bgCanvas.height;
+  e.x=W/2+(Math.random()-.5)*W*0.65; e.y=H+Math.random()*15;
+  e.vy=0.28+Math.random()*0.65; e.r=0.5+Math.random()*1.8;
+  e.alpha=0.35+Math.random()*0.5; e.life=0.6+Math.random()*1.6;
+  e.decay=0.22+Math.random()*0.38; e.freq=0.6+Math.random()*2;
+  e.phase=Math.random()*Math.PI*2; e.drift=0.12+Math.random()*0.3;
+}
+for (let i=0;i<30;i++) { const e={}; resetEmber(e); e.y=Math.random()*bgCanvas.height; embers.push(e); }
+
+function drawBackground(dt) {
+  fireT+=dt;
+  const W=bgCanvas.width, H=bgCanvas.height;
+  bgCtx.clearRect(0,0,W,H);
+  bgCtx.fillStyle='#120a04'; bgCtx.fillRect(0,0,W,H);
+  const g1=bgCtx.createRadialGradient(W/2,H+60,10,W/2,H+60,H*1.3);
+  const f1=0.15+0.045*Math.sin(fireT*1.8)+0.025*Math.sin(fireT*3.5+0.5);
+  const f2=0.08+0.03*Math.sin(fireT*2.3+1)+0.015*Math.sin(fireT*4.2);
+  g1.addColorStop(0,`rgba(210,85,18,${f1})`); g1.addColorStop(0.3,`rgba(160,50,8,${f2})`);
+  g1.addColorStop(0.65,'rgba(60,18,4,0.035)'); g1.addColorStop(1,'rgba(0,0,0,0)');
+  bgCtx.fillStyle=g1; bgCtx.fillRect(0,0,W,H);
+  const g2=bgCtx.createRadialGradient(W*0.1,H*0.6,5,W*0.1,H*0.6,H*0.55);
+  g2.addColorStop(0,`rgba(200,90,20,${0.06+0.02*Math.sin(fireT*2.7+2)})`); g2.addColorStop(1,'rgba(0,0,0,0)');
+  bgCtx.fillStyle=g2; bgCtx.fillRect(0,0,W,H);
+  const gt=bgCtx.createLinearGradient(0,0,0,H*0.35);
+  gt.addColorStop(0,'rgba(0,0,0,0.42)'); gt.addColorStop(1,'rgba(0,0,0,0)');
+  bgCtx.fillStyle=gt; bgCtx.fillRect(0,0,W,H);
+  for (const e of embers) {
+    e.y-=e.vy*(dt*60); e.x+=Math.sin(fireT*e.freq+e.phase)*e.drift; e.life-=dt*e.decay;
+    if (e.life<=0||e.y<-20) resetEmber(e);
+    const a=Math.min(1,e.life)*e.alpha;
+    bgCtx.beginPath(); bgCtx.arc(e.x,e.y,e.r,0,Math.PI*2);
+    bgCtx.fillStyle=e.r>1.4?`rgba(230,115,28,${a})`:`rgba(255,195,75,${a})`; bgCtx.fill();
+  }
+}
+
+let bgFrame=null, bgLastT=0;
+function bgLoop(ts) {
+  const dt=Math.min((ts-bgLastT)/1000,0.1); bgLastT=ts;
+  drawBackground(dt); bgFrame=requestAnimationFrame(bgLoop);
+}
+bgLastT=performance.now(); bgFrame=requestAnimationFrame(bgLoop);
+
+// ══════════════════════════════════════════
+// TITLE LOGIC
+// ══════════════════════════════════════════
+function toggleCat(el) {
+  el.classList.toggle('active');
+  selectedCats[el.classList.contains('active')?'add':'delete'](el.dataset.cat);
+  document.getElementById('error-msg').textContent='';
+}
+
+function buildPool() {
+  const seen=new Set(); pool=[];
+  for (const cat of selectedCats)
+    for (const item of LETTER_DATA[cat])
+      if (!seen.has(item.letter)) { seen.add(item.letter); pool.push(item); }
+}
+
+function setScript(s) {
+  scriptStyle = s;
+  ['print','cursive'].forEach(k => {
+    document.getElementById('script-'+k).classList.toggle('active', k===s);
+  });
+}
+
+function setDifficulty(d) {
+  difficulty = d;
+  ['easy','medium','hard'].forEach(k => {
+    document.getElementById('diff-'+k).classList.toggle('active', k===d);
+  });
+}
+
+function startGame() {
+  const t=T[lang];
+  if (!selectedCats.size) { document.getElementById('error-msg').textContent=t.errorEmpty; return; }
+  buildPool();
+  score=0;lives=5;level=1;activeLetters=[];spawnTimer=999;levelTimer=0;burstCooldown=0;burstPending=0;
+  cancelAnimationFrame(bgFrame); bgFrame=null;
+  document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('overlay-screen').classList.add('hidden');
+  document.getElementById('music-btn').classList.remove('on-title');
+  document.getElementById('hud').classList.remove('hidden');
+  document.getElementById('input-bar').classList.remove('hidden');
+  document.getElementById('pause-btn').style.display='flex';
+  document.getElementById('home-btn').style.display='flex';
+  document.getElementById('lang-back-btn').style.display='none';
+  document.getElementById('title-share-btn').style.display='none';
+  updateHUD(); resizeCanvas();
+  buildKeyboard(); showKeyboard();
+  gameRunning=true; paused=false; lastTime=performance.now();
+  animFrame=requestAnimationFrame(gameLoop);
+  const inp=document.getElementById('phonetic-input');
+  inp.value=''; inp.placeholder=t.placeholder;
+  // game keyboard used — do not focus input (prevents system keyboard)
+  if (document.activeElement) document.activeElement.blur();
+  repositionInputBar();
+}
+
+// ══════════════════════════════════════════
+// GAME LOOP
+// ══════════════════════════════════════════
+function gameLoop(ts) {
+  if (!gameRunning) return;
+  const dt=Math.min((ts-lastTime)/1000,0.1); lastTime=ts;
+  drawBackground(dt);
+  if (!paused) { updateGame(dt); drawGame(); }
+  animFrame=requestAnimationFrame(gameLoop);
+}
+
+function getLevelParams() {
+  // Speed as fraction of visibleHeight/sec — screen-size independent
+  const presets = {
+    easy:   { baseSpeed:0.10, speedInc:0,     baseSpawn:5.2, spawnDec:0    },
+    medium: { baseSpeed:0.16, speedInc:0,     baseSpawn:3.6, spawnDec:0    },
+    hard:   { baseSpeed:0.22, speedInc:0,     baseSpawn:3.0, spawnDec:0    },
+  };
+  const p = presets[difficulty];
+  const H = visibleHeight;
+  return {
+    speed:         (p.baseSpeed + (level-1)*p.speedInc) * H,
+    spawnInterval: Math.max(1.1, p.baseSpawn - (level-1)*p.spawnDec),
+    maxLetters:    Math.min(3+Math.floor((level-1)*0.8),9)
+  };
+}
+
+// Extra burst letter injection
+// burstCooldown: time until the next burst is allowed
+// burstPending: short delay before burst letter spawns (feels like a quick follow-up)
+let burstCooldown  = 0;
+let burstPending   = 0;
+
+function getBurstChance() {
+  // Returns probability (0–1) of triggering a burst after a regular spawn
+  // Grows with level. Easy: never. Medium: rare at first, grows. Hard: more frequent.
+  if (difficulty === 'easy')   return 0;
+  if (difficulty === 'medium') return Math.min(0.08 + (level - 1) * 0.04, 0.35); // 8%→35%
+  if (difficulty === 'hard')   return Math.min(0.25 + (level - 1) * 0.10, 0.80); // 25%→80%
+  return 0;
+}
+
+function getBurstDelay() {
+  // Short delay before burst letter appears (seconds)
+  if (difficulty === 'medium') return 0.35 + Math.random() * 0.25; // 0.35–0.60s
+  if (difficulty === 'hard')   return 0.12 + Math.random() * 0.15; // 0.12–0.27s
+  return 0.4;
+}
+
+function updateGame(dt) {
+  const {speed,spawnInterval,maxLetters}=getLevelParams();
+  const W=canvas.width, floor=visibleHeight-60;
+
+  levelTimer+=dt;
+  if (levelTimer>20) { level++; levelTimer=0; updateHUD(); }
+
+  // Regular spawn
+  spawnTimer+=dt;
+  if (spawnTimer>=spawnInterval && activeLetters.length<maxLetters) {
+    spawnTimer=0;
+    spawnLetter(W,speed);
+    // Roll for a burst follow-up
+    if (burstCooldown<=0 && Math.random()<getBurstChance()) {
+      burstPending  = getBurstDelay();
+      burstCooldown = spawnInterval * 1.5; // don't burst again too soon
+    }
+  }
+
+  // Burst cooldown
+  if (burstCooldown>0) burstCooldown-=dt;
+
+  // Pending burst letter
+  if (burstPending>0) {
+    burstPending-=dt;
+    if (burstPending<=0 && activeLetters.length<maxLetters) {
+      burstPending=0;
+      spawnLetter(W,speed);
+    }
+  }
+
+  for (let i=activeLetters.length-1;i>=0;i--) {
+    const l=activeLetters[i];
+    l.y+=l.speed*dt;
+    if (l.shake>0) l.shake=Math.max(0,l.shake-dt*4);
+    if (l.y>=floor) { activeLetters.splice(i,1); loseLife(); }
+  }
+}
+
+function spawnLetter(W,speed) {
+  const item=pool[Math.floor(Math.random()*pool.length)];
+  const size=W<480?34:48; const margin=size*1.5;
+  const variance = visibleHeight * 0.03; // ±3% of screen height — consistent across devices
+  activeLetters.push({ letter:item.letter, phonetic:item.phonetic, x:margin+Math.random()*(W-margin*2), y:-52, speed:speed+(Math.random()-.5)*2*variance, size, wobble:Math.random()*Math.PI*2, flash:0, shake:0 });
+}
+
+function drawGame() {
+  const W=canvas.width, floor=visibleHeight-60;
+  ctx.clearRect(0,0,W,canvas.height);
+  ctx.save(); ctx.strokeStyle='rgba(200,110,35,0.2)'; ctx.lineWidth=1; ctx.setLineDash([5,10]);
+  ctx.beginPath(); ctx.moveTo(0,floor); ctx.lineTo(W,floor); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  for (const l of activeLetters) {
+    ctx.save();
+    const shakeX = (l.shake>0) ? Math.sin(l.shake*40)*6*l.shake : 0;
+    ctx.translate(l.x + shakeX, l.y);
+    const isFlash=l.flash>0;
+    ctx.beginPath(); ctx.arc(0,0,l.size*0.66,0,Math.PI*2);
+    ctx.fillStyle=isFlash?`rgba(90,15,8,${0.38+l.flash*0.42})`:'rgba(28,15,6,0.84)'; ctx.fill();
+    ctx.strokeStyle=isFlash?`rgba(192,57,43,${0.65+l.flash*0.35})`:`rgba(195,115,38,${0.42+0.14*Math.sin(l.wobble)})`;
+    ctx.lineWidth=1.5; ctx.shadowColor=isFlash?'rgba(192,57,43,0.6)':'rgba(215,95,25,0.3)'; ctx.shadowBlur=isFlash?20:11; ctx.stroke();
+    ctx.font=`${l.size}px ${scriptStyle==='cursive'?"'Playpen Sans Hebrew',serif":"'Frank Ruhl Libre',serif"}`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle=isFlash?'#ff8070':'#faf0dc'; ctx.shadowColor=isFlash?'rgba(255,80,50,0.5)':'rgba(240,160,30,0.22)'; ctx.shadowBlur=isFlash?13:5;
+    ctx.fillText(l.letter,0,2);
+    ctx.restore();
+    if (l.flash>0) l.flash=Math.max(0,l.flash-0.06);
+  }
+}
+
+// ══════════════════════════════════════════
+// INPUT
+// ══════════════════════════════════════════
+const inp=document.getElementById('phonetic-input');
+inp.addEventListener('keydown',e=>{ 
+  if(e.key==='Enter') { e.preventDefault(); submitAnswer(); }
+  else if(e.key.length===1) { e.preventDefault(); } // block native insertion; handled by document listener
+});
+
+// Physical keyboard → highlight and trigger on-screen key
+document.addEventListener('keydown', function(e) {
+  if (!gameRunning || paused) return;
+  // Blur any focused button so Enter can't trigger it
+  if (document.activeElement && document.activeElement !== document.body) {
+    document.activeElement.blur();
+  }
+  if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); return; }
+  if (e.key === 'Backspace') { e.preventDefault(); kbBack(); return; }
+  // Only single printable characters
+  if (e.key.length !== 1) return;
+  const ch = e.key.toLowerCase();
+  // Find matching on-screen key button
+  const btn = Array.from(document.querySelectorAll('#kb-rows .kb-key')).find(function(b){ return b.textContent === ch; });
+  if (btn) {
+    kbPress(ch, btn);
+  }
+});
+
+function submitAnswer() {
+  if (!gameRunning||paused) return;
+  const val=inp.value.trim().toLowerCase(); if (!val) return;
+  let bestIdx=-1,bestY=-Infinity;
+  for (let i=0;i<activeLetters.length;i++) { const l=activeLetters[i]; if (l.phonetic===val&&l.y>bestY) { bestY=l.y; bestIdx=i; } }
+  if (bestIdx>=0) {
+    const l=activeLetters[bestIdx]; burstParticles(l.x,l.y,l.letter); scorePopup(l.x,l.y,'+'+getPoints());
+    score+=getPoints(); activeLetters.splice(bestIdx,1); flashInput('correct');
+  } else { flashInput('wrong'); showHint(val); shakeLetters(); }
+  inp.value=''; updateKbDisplay(); updateHUD();
+}
+
+function getPoints() { return 10+(level-1)*5; }
+function flashInput(type) { inp.classList.remove('correct','wrong'); void inp.offsetWidth; inp.classList.add(type); setTimeout(()=>inp.classList.remove(type),360); }
+function showHint(typed) {
+  const h=document.getElementById('hint-bar'); clearTimeout(hintTimeout);
+  const m=pool.find(x=>x.phonetic===typed); const t=T[lang];
+  h.textContent=m?t.hintMatch(typed,m.letter):t.hintNoMatch(typed);
+  h.style.display='block'; hintTimeout=setTimeout(()=>h.style.display='none',2200);
+}
+
+// ══════════════════════════════════════════
+// LIVES
+// ══════════════════════════════════════════
+function loseLife() { lives--; updateHUD(); shakeScreen(); if (lives<=0) endGame(false); }
+
+function endGame(won) {
+  gameRunning=false; cancelAnimationFrame(animFrame);
+  document.getElementById('hud').classList.add('hidden');
+  document.getElementById('input-bar').classList.add('hidden');
+  document.getElementById('game-keyboard').classList.add('hidden');
+  document.getElementById('pause-btn').style.display='none';
+  document.getElementById('home-btn').style.display='none';
+  const _db=document.getElementById('diff-below'); if(_db) _db.textContent='';
+  const t=T[lang];
+  document.getElementById('overlay-emoji').textContent   =won?t.winEmoji:t.loseEmoji;
+  document.getElementById('overlay-title').textContent   =won?t.winTitle:'אַ שאָד…';
+  document.getElementById('overlay-title').className     ='overlay-title '+(won?'win':'game-over');
+  document.getElementById('overlay-subtitle').textContent=won?t.winSub:t.loseSub;
+  document.getElementById('overlay-score').textContent   =score;
+  document.getElementById('overlay-diff-label').textContent = won ? '' : getDiffLabel();
+  if (!won) {
+    const catOrder = ['vowels','diphthongs','consonants','clusters','finals','loshnkoydesh'];
+    const catNames = catOrder.filter(c => selectedCats.has(c)).map(c => T[lang][c]);
+    const scriptName = scriptStyle === 'cursive' ? T[lang].cursiveLabel : T[lang].printLabel;
+    document.getElementById('overlay-cats-label').textContent = catNames.join(' · ') + ' · ' + scriptName;
+  } else {
+    document.getElementById('overlay-cats-label').textContent = '';
+  }
+  document.getElementById('again-btn').textContent       =t.backToTitle;
+  document.getElementById('overlay-screen').classList.remove('hidden');
+  // Share section: only on loss
+  const shareSection = document.getElementById('share-section');
+  const shareLabel   = document.getElementById('share-label');
+  const copyBtnLabel = document.getElementById('copy-btn-label');
+  const copyConfirm  = document.getElementById('copy-confirm');
+  if (!won) {
+    shareSection.style.display = 'block';
+    shareLabel.textContent     = t.shareLabel;
+    copyBtnLabel.textContent   = t.copyBtn;
+    copyConfirm.textContent    = '';
+  } else {
+    shareSection.style.display = 'none';
+  }
+}
+
+function getShareText() {
+  return T[lang].shareText();
+}
+
+function shareWhatsApp() {
+  window.open('https://wa.me/?text=' + encodeURIComponent(getShareText()), '_blank');
+}
+
+function shareEmail() {
+  const t = T[lang];
+  const subject = encodeURIComponent('Oyfn Pripetshik');
+  const body    = encodeURIComponent(getShareText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function returnToTitle() {
+  cancelAnimationFrame(animFrame); gameRunning=false;paused=false;activeLetters=[];
+  document.getElementById('overlay-screen').classList.add('hidden');
+  document.getElementById('hud').classList.add('hidden');
+  document.getElementById('input-bar').classList.add('hidden');
+  document.getElementById('game-keyboard').classList.add('hidden');
+  document.getElementById('pause-btn').style.display='none';
+  document.getElementById('home-btn').style.display='none';
+  document.getElementById('lang-picker-screen').classList.add('hidden');
+  document.getElementById('title-screen').classList.remove('hidden');
+  document.getElementById('lang-back-btn').style.display = 'flex';
+  document.getElementById('title-share-btn').style.display = 'flex';
+  document.getElementById('music-btn').classList.add('on-title');
+  const _db2=document.getElementById('diff-below'); if(_db2) _db2.textContent='';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  bgLastT=performance.now(); bgFrame=requestAnimationFrame(bgLoop);
+}
+
+function confirmLeave() {
+  const t = T[lang];
+  document.getElementById('leave-text').textContent = t.leaveText;
+  document.getElementById('leave-yes').textContent  = t.leaveYes;
+  document.getElementById('leave-no').textContent   = t.leaveNo;
+  document.getElementById('leave-modal').classList.add('show');
+}
+
+function confirmLeaveYes() {
+  document.getElementById('leave-modal').classList.remove('show');
+  window.open('https://www.jeveldiscos.com', '_blank');
+}
+
+function confirmLeaveNo() {
+  document.getElementById('leave-modal').classList.remove('show');
+}
+
+function confirmHome() {
+  // Pause silently while modal is open
+  if (!gameRunning) return;
+  if (!paused) { paused=true; document.getElementById('pause-btn').textContent='▶'; }
+  document.getElementById('confirm-modal').classList.add('show');
+}
+
+function confirmYes() {
+  document.getElementById('confirm-modal').classList.remove('show');
+  paused=false;
+  returnToTitle();
+}
+
+function confirmNo() {
+  document.getElementById('confirm-modal').classList.remove('show');
+  // Resume game
+  paused=false;
+  lastTime=performance.now();
+  document.getElementById('pause-btn').textContent='⏸';
+}
+
+function togglePause() {
+  paused=!paused;
+  document.getElementById('pause-btn').textContent=paused?'▶':'⏸';
+  if (!paused) lastTime=performance.now();
+}
+
+// ══════════════════════════════════════════
+// HUD
+// ══════════════════════════════════════════
+function getDiffLabel() {
+  const t = T[lang];
+  const prefix = t.diffPrefix || 'Dificultad: ';
+  if (difficulty === 'easy')   return prefix + t.easyLabel;
+  if (difficulty === 'medium') return prefix + t.medLabel;
+  if (difficulty === 'hard')   return prefix + t.hardLabel;
+  return '';
+}
+
+function updateHUD() {
+  const ld=document.getElementById('lives-display'); ld.innerHTML='';
+  for (let i=0;i<5;i++) { const h=document.createElement('span'); h.className='heart'+(i>=lives?' lost':''); h.textContent='🕯️'; ld.appendChild(h); }
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('level-display').innerHTML=T[lang].hudLevel(level);
+  const db=document.getElementById('diff-below'); if(db) db.textContent=getDiffLabel();
+}
+
+// ══════════════════════════════════════════
+// FX
+// ══════════════════════════════════════════
+function burstParticles(x,y,letter) {
+  const cols=['#e8621a','#f5a623','#ffd166','#faf0dc','#c97d2e'];
+  for (let i=0;i<7;i++) {
+    const p=document.createElement('div'); p.className='particle';
+    p.textContent=['✦','✧','·','∗','•','✸'][Math.floor(Math.random()*6)];
+    p.style.cssText=`left:${x+(Math.random()-.5)*46}px;top:${y+(Math.random()-.5)*24}px;font-size:${9+Math.random()*14}px;color:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${.5+Math.random()*.45}s;`;
+    document.body.appendChild(p); setTimeout(()=>p.remove(),900);
+  }
+  const lp=document.createElement('div'); lp.className='particle'; lp.textContent=letter;
+  lp.style.cssText=`left:${x-20}px;top:${y-22}px;font-family:'Frank Ruhl Libre',serif;font-size:42px;color:rgba(245,166,35,0.92);text-shadow:0 0 18px rgba(245,166,35,0.8);`;
+  document.body.appendChild(lp); setTimeout(()=>lp.remove(),900);
+}
+
+function scorePopup(x,y,txt) {
+  const el=document.createElement('div'); el.className='score-pop';
+  el.textContent=txt; el.style.left=(x-20)+'px'; el.style.top=(y-28)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),950);
+}
+
+function shakeLetters() {
+  // Give all visible letters a shake offset sequence
+  for (const l of activeLetters) {
+    l.shake = 1.0; // will decay over time
+  }
+}
+
+function shakeScreen() {
+  canvas.style.transition='transform 0.05s';
+  const mv=[[5,-3],[-5,3],[4,4],[-4,-4],[2,-2],[-2,2],[0,0]]; let i=0;
+  const iv=setInterval(()=>{ if(i>=mv.length){canvas.style.transform='';clearInterval(iv);return;} canvas.style.transform=`translate(${mv[i][0]}px,${mv[i][1]}px)`;i++; },50);
+}
+
+// ══════════════════════════════════════════
+// EASTER EGG - long press flame 5 seconds
+// ══════════════════════════════════════════
+let flamePressTimer = null;
+
+function flamePress(e) {
+  if (e) e.preventDefault();
+  flamePressTimer = setTimeout(() => {
+    document.getElementById('easter-egg').classList.add('show');
+  }, 5000);
+}
+
+function flameRelease() {
+  clearTimeout(flamePressTimer);
+  flamePressTimer = null;
+}
+
+function closeEasterEgg() {
+  document.getElementById('easter-egg').classList.remove('show');
+}
+
+
+// ══════════════════════════════════════════
+// CUSTOM KEYBOARD
+// ══════════════════════════════════════════
+
+// All possible phonetic keys in display order
+// True QWERTY layout
+const QWERTY_ROWS = [
+  ['q','w','e','r','t','y','u','i','o','p'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['z','x','c','v','b','n','m'],
+];
+
+function buildKeyboard() {
+  const kb = document.getElementById('kb-rows');
+  kb.innerHTML = '';
+
+  for (const row of QWERTY_ROWS) {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'kb-row';
+    for (const key of row) {
+      const btn = document.createElement('button');
+      btn.className = 'kb-key';
+      btn.setAttribute('tabindex', '-1');
+      btn.textContent = key;
+      btn.addEventListener('pointerdown', e => { e.preventDefault(); kbPress(key, btn); });
+      rowEl.appendChild(btn);
+    }
+    kb.appendChild(rowEl);
+  }
+
+  // Action row: ⌫ + ENTER
+  const actionRow = document.createElement('div');
+  actionRow.className = 'kb-row';
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'kb-key kb-back';
+  backBtn.setAttribute('tabindex', '-1');
+  backBtn.textContent = '⌫';
+  backBtn.addEventListener('pointerdown', e => { e.preventDefault(); kbBack(); });
+  actionRow.appendChild(backBtn);
+
+  const enterBtn = document.createElement('button');
+  enterBtn.className = 'kb-key kb-enter';
+  enterBtn.setAttribute('tabindex', '-1');
+  enterBtn.textContent = '↵ ENTER';
+  enterBtn.addEventListener('pointerdown', e => { e.preventDefault(); submitAnswer(); });
+  actionRow.appendChild(enterBtn);
+
+  kb.appendChild(actionRow);
+}
+
+function kbPress(key, btn) {
+  const inp = document.getElementById('phonetic-input');
+  inp.value += key;
+  updateKbDisplay();
+  btn.classList.add('pressed');
+  setTimeout(() => btn.classList.remove('pressed'), 120);
+}
+
+function kbBack() {
+  const inp = document.getElementById('phonetic-input');
+  inp.value = inp.value.slice(0, -1);
+  updateKbDisplay();
+}
+
+function updateKbDisplay() {
+  const el = document.getElementById('kb-display-text');
+  if (el) el.textContent = document.getElementById('phonetic-input').value;
+}
+
+function showKeyboard() {
+  const kb = document.getElementById('game-keyboard');
+  kb.classList.remove('hidden');
+  // Force layout, measure height synchronously, then lock it — no mid-game changes
+  const h = kb.getBoundingClientRect().height || kb.offsetHeight;
+  document.documentElement.style.setProperty('--kb-height', h + 'px');
+  document.body.classList.add('kb-active');
+  // Update visibleHeight NOW before the game loop starts, so floor never shifts
+  updateVisibleHeight();
+}
+
+function hideKeyboard() {
+  document.getElementById('game-keyboard').classList.add('hidden');
+  document.body.classList.remove('kb-active');
+  updateVisibleHeight();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+applyLang();
+initMusic();
+document.getElementById('music-btn').classList.add('on-title');
+
+// ── BROWSER EXIT WARNING ──────────────────────────────────────────────────────
+window.addEventListener('beforeunload', function(e) {
+  if (gameRunning) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
