@@ -313,20 +313,25 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
   }
   .lang-picker-box {
     text-align:center;
-    padding:40px 32px 100px;
+    padding:40px 32px 60px;
     display:flex;
     flex-direction:column;
     align-items:center;
     gap:0;
     position:relative;
+    width:100%;
+    max-width:480px;
+    box-sizing:border-box;
   }
   .lang-picker-img-title {
     width: min(400px, 82vw);
     display:block;
-    margin: 0 auto 28px;
+    margin: 0 auto 24px;
     filter: contrast(1.05);
     mix-blend-mode: multiply;
   }
@@ -335,7 +340,7 @@
     font-size:0.72rem;
     letter-spacing:0.35em;
     color:#7a6f62;
-    margin-bottom:18px;
+    margin-bottom:16px;
     opacity:0.55;
   }
   .lang-picker-btns {
@@ -370,12 +375,52 @@
     letter-spacing:0.05em;
     text-align:center;
     line-height:1.7;
-    margin-top:22px;
+    margin-top:18px;
     padding:0 8px;
   }
   .lang-picker-footer-logo {
     width: min(88px, 20vw);
-    margin-top:40px;
+    margin-top:28px;
+  }
+
+  /* ── LANGUAGE PICKER — MOBILE ── */
+  @media (max-height: 700px), (max-width: 390px) {
+    .lang-picker-box {
+      padding:20px 24px 32px;
+      justify-content:flex-start;
+    }
+    .lang-picker-img-title {
+      width: min(280px, 72vw);
+      margin-bottom:14px;
+    }
+    .lang-picker-ornament {
+      margin-bottom:10px;
+      font-size:0.65rem;
+    }
+    .lang-pick-btn {
+      padding:11px 16px;
+    }
+    .lang-picker-notice {
+      margin-top:12px;
+      font-size:clamp(8px,2vw,10px);
+    }
+    .lang-picker-footer-logo {
+      margin-top:16px;
+      width: min(68px, 18vw);
+    }
+  }
+
+  @media (max-height: 560px) {
+    .lang-picker-box {
+      padding:12px 20px 20px;
+    }
+    .lang-picker-img-title {
+      width: min(220px, 60vw);
+      margin-bottom:10px;
+    }
+    .lang-picker-ornament { display:none; }
+    .lang-picker-notice { margin-top:8px; }
+    .lang-picker-footer-logo { margin-top:10px; }
   }
 
 
