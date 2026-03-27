@@ -25,6 +25,7 @@ const translations = {
     playBtn: "Jugar",
     downloadBtn: "Bajar",
     contactLabel: "Links y contacto",
+    footerText: "© 2024 Jevel Discos",
   },
   en: {
     tagline: "Jevel is an independent Yiddish and klezmer music label.",
@@ -46,6 +47,7 @@ const translations = {
     playBtn: "Play",
     downloadBtn: "Download",
     contactLabel: "Links & contact",
+    footerText: "© 2024 Jevel Discos",
   },
   pt: {
     tagline: "Jevel é um selo independente de música ídiche e klezmer.",
@@ -67,33 +69,65 @@ const translations = {
     playBtn: "Jogar",
     downloadBtn: "Baixar",
     contactLabel: "Links e contato",
+    footerText: "© 2024 Jevel Discos",
   }
 };
 
 // ---- LANGUAGE SWITCHER ----
 function setLanguage(lang) {
+  console.log('Setting language to:', lang);
+  
   const t = translations[lang];
+  
+  if (!t) {
+    console.error('Language not found:', lang);
+    return;
+  }
 
+  // Update all elements with data-i18n attribute
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (t[key] !== undefined) {
       el.innerHTML = t[key];
+      console.log(`Updated ${key}:`, t[key]);
+    } else {
+      console.warn(`Translation missing for key: ${key}`);
     }
   });
 
+  // Update active language button
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
   });
 
+  // Set document language
   document.documentElement.lang = lang === 'pt' ? 'pt' : lang === 'en' ? 'en' : 'es';
+  
+  // Save preference to localStorage
+  localStorage.setItem('jevel-language', lang);
+  
+  console.log('Language set successfully');
 }
 
 function setupLangSwitcher() {
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      setLanguage(btn.getAttribute('data-lang'));
+  console.log('Setting up language switcher');
+  
+  const buttons = document.querySelectorAll('.lang-btn');
+  console.log('Found', buttons.length, 'language buttons');
+  
+  buttons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const lang = btn.getAttribute('data-lang');
+      console.log('Language button clicked:', lang);
+      setLanguage(lang);
     });
   });
+  
+  // Restore saved language preference
+  const savedLang = localStorage.getItem('jevel-language') || 'es';
+  console.log('Restoring saved language:', savedLang);
+  setLanguage(savedLang);
 }
 
 // ---- SCROLL REVEAL ----
@@ -196,11 +230,13 @@ function setupAudio() {
 
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM fully loaded, initializing Jevel...');
   setupLangSwitcher();
   setupReveal();
   setupTilt();
   setupFooter();
   setupAudio();
+  console.log('Jevel initialized successfully');
 });
 
 // ---- BLOB DOWNLOAD ----
