@@ -302,7 +302,6 @@
 
   .error-msg { color:var(--red); font-style:italic; font-size:13px; margin-top:8px; min-height:18px; text-align:center; }
   .title-footer { margin-top:12px; font-style:italic; font-size:14px; color:rgba(139,115,85,0.75); letter-spacing:0.06em; text-align:center; line-height:1.6; }
-  .credits { margin-top:10px; font-style:italic; font-size:13px; color:rgba(139,115,85,0.6); letter-spacing:0.06em; text-align:center; }
   .jvl-logo { width:80px; opacity:0.75; display:block; margin:10px auto 0; transition:opacity 0.3s; }
   .jvl-logo:hover { opacity:1; }
 
@@ -815,7 +814,10 @@
 
     <div class="title-footer" id="t-footer" style="margin-top:14px;">Escribí el sonido fonético para atrapar cada letra</div>
     <img class="jvl-logo" onclick="confirmLeave()" style="cursor:pointer;" src="image0.png" alt="Jevel">
-    <div class="credits" id="t-credits">Creado por el sello fonográfico Jevel. Argentina.</div>
+    <div class="lang-picker-jevel-footer" style="margin-top:6px;">
+      © 2026 Jevel<br>
+      Buenos Aires, Argentina <svg class="footer-flag" xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 900 600"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg>
+    </div>
   </div>
 </div>
 
@@ -940,7 +942,6 @@ function initMusic() {
   music.loop = true;
   music.volume = 0.55;
   music.play().catch(() => {
-    // Autoplay blocked — start on very first user interaction of any kind
     const unlock = () => {
       if (musicOn) music.play().catch(()=>{});
     };
@@ -967,7 +968,7 @@ function toggleMusic() {
 // ══════════════════════════════════════════
 // I18N
 // ══════════════════════════════════════════
-let lang = 'es'; // default: Spanish
+let lang = 'es';
 
 const T = {
   es: {
@@ -981,7 +982,6 @@ const T = {
     loshnkoydesh: 'Loshn-Koydesh',
     finals:       'Finales',
     footer:       'Escribí el sonido fonético para atrapar cada letra',
-    credits:      'Creado por el sello fonográfico Jevel. Argentina.',
     placeholder:  'Escribí acá y presioná enter...',
     errorEmpty:   'Por favor seleccioná al menos una categoría.',
     hudLevel:     (n) => `Nivel<br><span>${n}</span>`,
@@ -1024,7 +1024,6 @@ const T = {
     loshnkoydesh: 'Loshn-Koydesh',
     finals:       'Finais',
     footer:       'Digite o som fonético para pegar cada letra',
-    credits:      'Criado pelo selo fonográfico Jevel. Argentina.',
     placeholder:  'Escreva aqui e pressione enter...',
     errorEmpty:   'Por favor, selecione pelo menos uma categoria.',
     hudLevel:     (n) => `Nível<br><span>${n}</span>`,
@@ -1067,7 +1066,6 @@ const T = {
     loshnkoydesh: 'Loshn-Koydesh',
     finals:       'Finals',
     footer:       'Type the phonetic sound to catch each falling letter',
-    credits:      'Created by Jevel record label. Argentina.',
     placeholder:  'Type here and press enter...',
     errorEmpty:   'Please select at least one category.',
     hudLevel:     (n) => `Level<br><span>${n}</span>`,
@@ -1113,7 +1111,6 @@ function applyLang() {
   document.getElementById('cn-loshnkoydesh').textContent= t.loshnkoydesh;
   document.getElementById('cn-finals').textContent    = t.finals;
   document.getElementById('t-footer').textContent     = t.footer;
-  document.getElementById('t-credits').textContent    = t.credits;
   document.getElementById('phonetic-input').placeholder = t.placeholder;
   document.getElementById('t-diff-title').textContent = t.diffTitle;
   document.getElementById('dn-easy').textContent      = t.easyLabel;
@@ -1132,20 +1129,17 @@ function applyLang() {
 function pickLang(l) {
   lang = l;
   applyLang();
-  // Asegurar que la música arranca con el primer click del usuario
   if (music && musicOn) music.play().catch(() => {});
   const overlay = document.getElementById('fade-overlay');
   const pickerScreen = document.getElementById('lang-picker-screen');
   const titleScreen = document.getElementById('title-screen');
 
-  // 1. Fade to black
   overlay.style.transition = 'opacity 0.7s ease';
   overlay.style.opacity = '1';
 
   overlay.addEventListener('transitionend', function onBlack() {
     overlay.removeEventListener('transitionend', onBlack);
 
-    // 2. Swap instantáneo — desactivar transiciones de .screen
     pickerScreen.style.transition = 'none';
     titleScreen.style.transition = 'none';
     titleScreen.style.opacity = '1';
@@ -1156,7 +1150,6 @@ function pickLang(l) {
     document.getElementById('lang-back-btn').style.display = 'flex';
     document.getElementById('title-share-btn').style.display = 'flex';
 
-    // 3. Fade in cuando el browser pintó el title screen
     requestAnimationFrame(() => requestAnimationFrame(() => {
       overlay.style.transition = 'opacity 0.8s ease';
       overlay.style.opacity = '0';
@@ -1180,14 +1173,12 @@ function goToLangPicker() {
   const pickerScreen = document.getElementById('lang-picker-screen');
   const titleScreen = document.getElementById('title-screen');
 
-  // 1. Fade to black
   overlay.style.transition = 'opacity 0.7s ease';
   overlay.style.opacity = '1';
 
   overlay.addEventListener('transitionend', function onBlack() {
     overlay.removeEventListener('transitionend', onBlack);
 
-    // 2. Swap instantáneo — limpiar inline styles y usar solo clases
     pickerScreen.style.transition = 'none';
     titleScreen.style.transition = 'none';
     titleScreen.style.display = '';
@@ -1198,7 +1189,6 @@ function goToLangPicker() {
     document.getElementById('lang-back-btn').style.display = 'none';
     document.getElementById('title-share-btn').style.display = 'none';
 
-    // 3. Fade in cuando el browser pintó el picker
     requestAnimationFrame(() => requestAnimationFrame(() => {
       overlay.style.transition = 'opacity 0.8s ease';
       overlay.style.opacity = '0';
@@ -1234,8 +1224,8 @@ const LETTER_DATA = {
 // STATE
 // ══════════════════════════════════════════
 let selectedCats  = new Set(['vowels','diphthongs','consonants','clusters','finals','loshnkoydesh']);
-let difficulty    = 'medium'; // 'easy' | 'medium' | 'hard'
-let scriptStyle   = 'print';  // 'print' | 'cursive'
+let difficulty    = 'medium';
+let scriptStyle   = 'print';
 let activeLetters = [];
 let score=0, lives=5, level=1;
 let gameRunning=false, paused=false;
@@ -1384,7 +1374,6 @@ function startGame() {
   animFrame=requestAnimationFrame(gameLoop);
   const inp=document.getElementById('phonetic-input');
   inp.value=''; inp.placeholder=t.placeholder;
-  // game keyboard used — do not focus input (prevents system keyboard)
   if (document.activeElement) document.activeElement.blur();
   repositionInputBar();
 }
@@ -1401,7 +1390,6 @@ function gameLoop(ts) {
 }
 
 function getLevelParams() {
-  // Speed as fraction of visibleHeight/sec — screen-size independent
   const presets = {
     easy:   { baseSpeed:0.10, speedInc:0,     baseSpawn:5.2, spawnDec:0    },
     medium: { baseSpeed:0.16, speedInc:0,     baseSpawn:3.6, spawnDec:0    },
@@ -1416,25 +1404,19 @@ function getLevelParams() {
   };
 }
 
-// Extra burst letter injection
-// burstCooldown: time until the next burst is allowed
-// burstPending: short delay before burst letter spawns (feels like a quick follow-up)
 let burstCooldown  = 0;
 let burstPending   = 0;
 
 function getBurstChance() {
-  // Returns probability (0–1) of triggering a burst after a regular spawn
-  // Grows with level. Easy: never. Medium: rare at first, grows. Hard: more frequent.
   if (difficulty === 'easy')   return 0;
-  if (difficulty === 'medium') return Math.min(0.08 + (level - 1) * 0.04, 0.35); // 8%→35%
-  if (difficulty === 'hard')   return Math.min(0.25 + (level - 1) * 0.10, 0.80); // 25%→80%
+  if (difficulty === 'medium') return Math.min(0.08 + (level - 1) * 0.04, 0.35);
+  if (difficulty === 'hard')   return Math.min(0.25 + (level - 1) * 0.10, 0.80);
   return 0;
 }
 
 function getBurstDelay() {
-  // Short delay before burst letter appears (seconds)
-  if (difficulty === 'medium') return 0.35 + Math.random() * 0.25; // 0.35–0.60s
-  if (difficulty === 'hard')   return 0.12 + Math.random() * 0.15; // 0.12–0.27s
+  if (difficulty === 'medium') return 0.35 + Math.random() * 0.25;
+  if (difficulty === 'hard')   return 0.12 + Math.random() * 0.15;
   return 0.4;
 }
 
@@ -1450,22 +1432,18 @@ function updateGame(dt) {
   levelTimer+=dt;
   if (levelTimer>20) { level++; levelTimer=0; updateHUD(); }
 
-  // Regular spawn
   spawnTimer+=dt;
   if (spawnTimer>=spawnInterval && activeLetters.length<maxLetters) {
     spawnTimer=0;
     spawnLetter(W,speed);
-    // Roll for a burst follow-up
     if (burstCooldown<=0 && Math.random()<getBurstChance()) {
       burstPending  = getBurstDelay();
-      burstCooldown = spawnInterval * 1.5; // don't burst again too soon
+      burstCooldown = spawnInterval * 1.5;
     }
   }
 
-  // Burst cooldown
   if (burstCooldown>0) burstCooldown-=dt;
 
-  // Pending burst letter
   if (burstPending>0) {
     burstPending-=dt;
     if (burstPending<=0 && activeLetters.length<maxLetters) {
@@ -1485,7 +1463,7 @@ function updateGame(dt) {
 function spawnLetter(W,speed) {
   const item=pool[Math.floor(Math.random()*pool.length)];
   const size=W<480?34:48; const margin=size*1.5;
-  const variance = visibleHeight * 0.03; // ±3% of screen height — consistent across devices
+  const variance = visibleHeight * 0.03;
   activeLetters.push({ letter:item.letter, phonetic:item.phonetic, x:margin+Math.random()*(W-margin*2), y:-52, speed:speed+(Math.random()-.5)*2*variance, size, wobble:Math.random()*Math.PI*2, flash:0, shake:0 });
 }
 
@@ -1496,7 +1474,7 @@ function drawGame() {
   ctx.beginPath(); ctx.moveTo(0,floor); ctx.lineTo(W,floor); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
   for (const l of activeLetters) {
     ctx.save();
-    l.wobble += 0.04; // advance wobble each frame so border animates
+    l.wobble += 0.04;
     const shakeX = (l.shake>0) ? Math.sin(l.shake*40)*6*l.shake : 0;
     ctx.translate(l.x + shakeX, l.y);
     const isFlash=l.flash>0;
@@ -1518,22 +1496,18 @@ function drawGame() {
 const inp=document.getElementById('phonetic-input');
 inp.addEventListener('keydown',e=>{ 
   if(e.key==='Enter') { e.preventDefault(); submitAnswer(); }
-  else if(e.key.length===1) { e.preventDefault(); } // block native insertion; handled by document listener
+  else if(e.key.length===1) { e.preventDefault(); }
 });
 
-// Physical keyboard → highlight and trigger on-screen key
 document.addEventListener('keydown', function(e) {
   if (!gameRunning || paused) return;
-  // Blur any focused button so Enter can't trigger it
   if (document.activeElement && document.activeElement !== document.body) {
     document.activeElement.blur();
   }
   if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); return; }
   if (e.key === 'Backspace') { e.preventDefault(); kbBack(); return; }
-  // Only single printable characters
   if (e.key.length !== 1) return;
   const ch = e.key.toLowerCase();
-  // Only handle keys that exist on the on-screen keyboard (ignore ñ, é, etc.)
   const btn = Array.from(document.querySelectorAll('#kb-rows .kb-key')).find(function(b){ return b.textContent === ch; });
   if (btn) {
     kbPress(ch, btn);
@@ -1591,7 +1565,6 @@ function endGame(won) {
   }
   document.getElementById('again-btn').textContent       =t.backToTitle;
   document.getElementById('overlay-screen').classList.remove('hidden');
-  // Share section: only on loss
   const shareSection = document.getElementById('share-section');
   const shareLabel   = document.getElementById('share-label');
   if (!won) {
@@ -1653,7 +1626,6 @@ function confirmLeaveNo() {
 }
 
 function confirmHome() {
-  // Pause silently while modal is open
   if (!gameRunning) return;
   if (!paused) { paused=true; document.getElementById('pause-btn').textContent='▶'; }
   document.getElementById('confirm-modal').classList.add('show');
@@ -1667,7 +1639,6 @@ function confirmYes() {
 
 function confirmNo() {
   document.getElementById('confirm-modal').classList.remove('show');
-  // Resume game
   paused=false;
   lastTime=performance.now();
   document.getElementById('pause-btn').textContent='⏸';
@@ -1722,9 +1693,8 @@ function scorePopup(x,y,txt) {
 }
 
 function shakeLetters() {
-  // Give all visible letters a shake offset sequence
   for (const l of activeLetters) {
-    l.shake = 1.0; // will decay over time
+    l.shake = 1.0;
   }
 }
 
@@ -1759,9 +1729,6 @@ function closeEasterEgg() {
 // ══════════════════════════════════════════
 // CUSTOM KEYBOARD
 // ══════════════════════════════════════════
-
-// All possible phonetic keys in display order
-// True QWERTY layout
 const QWERTY_ROWS = [
   ['q','w','e','r','t','y','u','i','o','p'],
   ['a','s','d','f','g','h','j','k','l'],
@@ -1786,7 +1753,6 @@ function buildKeyboard() {
     kb.appendChild(rowEl);
   }
 
-  // Action row: ⌫ + ENTER
   const actionRow = document.createElement('div');
   actionRow.className = 'kb-row';
 
@@ -1829,11 +1795,9 @@ function updateKbDisplay() {
 function showKeyboard() {
   const kb = document.getElementById('game-keyboard');
   kb.classList.remove('hidden');
-  // Force layout, measure height synchronously, then lock it — no mid-game changes
   const h = kb.getBoundingClientRect().height || kb.offsetHeight;
   document.documentElement.style.setProperty('--kb-height', h + 'px');
   document.body.classList.add('kb-active');
-  // Update visibleHeight NOW before the game loop starts, so floor never shifts
   updateVisibleHeight();
 }
 
@@ -1850,7 +1814,6 @@ applyLang();
 initMusic();
 document.getElementById('music-btn').classList.add('on-title');
 
-// ── BROWSER EXIT WARNING ──────────────────────────────────────────────────────
 window.addEventListener('beforeunload', function(e) {
   if (gameRunning) {
     e.preventDefault();
