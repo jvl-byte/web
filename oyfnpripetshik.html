@@ -202,44 +202,6 @@
     opacity:0.9;
   }
 
-  /* ── SCRIPT TOGGLE ── */
-  .script-panel { margin-bottom:0; }
-  .script-title { display:none; }
-  .script-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-  .script-btn {
-    display:flex; align-items:center; gap:8px;
-    padding:8px 12px; border-radius:8px; cursor:pointer;
-    border:1.5px solid rgba(232,98,26,0.22); background:rgba(232,98,26,0.04);
-    transition:all 0.2s ease; font-family:'EB Garamond',serif;
-  }
-  .script-btn:hover { background:rgba(232,98,26,0.10); border-color:rgba(232,98,26,0.42); }
-  .script-btn.active { border-color:rgba(232,98,26,0.75); background:rgba(232,98,26,0.13);
-    box-shadow:0 0 12px rgba(232,98,26,0.18); }
-  .script-sample {
-    font-size:clamp(20px,5vw,24px); color:var(--ember2); line-height:1;
-    direction:rtl; flex-shrink:0;
-  }
-  .script-sample.cursive { font-family:'Playpen Sans Hebrew', serif; }
-  .script-label { font-size:clamp(13px,3.2vw,15px); color:var(--cream); letter-spacing:0.02em; }
-  .script-sub   { display:none; }
-
-  /* ── DIFFICULTY ── */
-  .difficulty-panel { margin-bottom:0; }
-  .difficulty-title { display:none; }
-  .difficulty-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
-  .diff-btn {
-    display:flex; align-items:center; justify-content:center; gap:6px;
-    padding:9px 6px; border-radius:8px; cursor:pointer;
-    border:1.5px solid rgba(232,98,26,0.22); background:rgba(232,98,26,0.04);
-    transition:all 0.2s ease; font-family:'EB Garamond',serif;
-  }
-  .diff-btn:hover { background:rgba(232,98,26,0.10); border-color:rgba(232,98,26,0.42); }
-  .diff-btn.active { border-color:rgba(232,98,26,0.75); background:rgba(232,98,26,0.15);
-    box-shadow:0 0 14px rgba(232,98,26,0.25); }
-  .diff-emoji { font-size:16px; line-height:1; }
-  .diff-label { font-size:clamp(13px,3.2vw,15px); color:var(--cream); letter-spacing:0.02em; }
-  .diff-desc  { display:none; }
-
   .play-btn {
     font-family:'EB Garamond',serif; font-style:italic;
     font-size:clamp(17px,4.5vw,22px); letter-spacing:0.12em;
@@ -300,8 +262,133 @@
   .script-sub   { font-style:italic; font-size:clamp(10px,2.4vw,12px); color:var(--ash); letter-spacing:0.03em; }
 
 
+  /* ── HOW TO PLAY MODAL ── */
+  #howto-modal {
+    display:none; position:fixed; inset:0; z-index:55;
+    background:rgba(12,7,3,0.92); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    align-items:flex-end; justify-content:center;
+    padding:0;
+  }
+  #howto-modal.show { display:flex; }
+  .howto-sheet {
+    width:100%; max-width:520px;
+    background:linear-gradient(170deg,#1e1008,#120a04);
+    border:1px solid rgba(232,98,26,0.28);
+    border-radius:18px 18px 0 0;
+    padding:22px 20px 32px;
+    max-height:92svh; max-height:92vh;
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+    scrollbar-width:none; -ms-overflow-style:none;
+    box-shadow:0 -8px 40px rgba(0,0,0,0.6);
+  }
+  .howto-sheet::-webkit-scrollbar { display:none; }
+  .howto-handle {
+    width:36px; height:4px; background:rgba(232,98,26,0.3);
+    border-radius:2px; margin:0 auto 18px;
+  }
+  .howto-title {
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(19px,5vw,23px); color:var(--fire);
+    text-align:center; margin-bottom:16px; letter-spacing:0.06em;
+    text-shadow:0 0 18px rgba(245,166,35,0.4);
+  }
+
+  /* ── Instructions cards (3 across) ── */
+  .howto-cards {
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:8px; margin-bottom:18px;
+  }
+  .howto-card {
+    background:rgba(232,98,26,0.06);
+    border:1px solid rgba(232,98,26,0.18);
+    border-radius:10px; padding:10px 10px 11px;
+  }
+  .howto-card-label {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(8px,1.8vw,10px); letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--ember);
+    opacity:0.8; margin-bottom:5px;
+  }
+  .howto-card-text {
+    font-style:italic; font-size:clamp(14px,3.5vw,16px);
+    color:var(--parch2); line-height:1.6; letter-spacing:0.01em;
+  }
+
+  /* ── Reference section ── */
+  .howto-ref-label {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(9px,2vw,11px); letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--ember);
+    opacity:0.7; margin-bottom:10px; text-align:center;
+  }
+
+  /* ── Letter grid: each group is a mini-block ── */
+  .howto-groups-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .howto-group-block {
+    background:rgba(255,220,150,0.03);
+    border:1px solid rgba(232,98,26,0.13);
+    border-radius:9px; padding:9px 10px 8px;
+  }
+  .howto-group-title {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(8px,1.8vw,10px); letter-spacing:0.15em;
+    text-transform:uppercase; color:rgba(232,98,26,0.6);
+    margin-bottom:7px;
+  }
+  /* Pills grid inside each block */
+  .howto-pills {
+    display:flex; flex-wrap:wrap; gap:5px;
+  }
+  .howto-pill {
+    display:inline-flex; align-items:center; gap:4px;
+    background:rgba(232,98,26,0.08);
+    border:1px solid rgba(232,98,26,0.16);
+    border-radius:6px; padding:3px 7px 3px 6px;
+  }
+  .howto-pill-letter {
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:clamp(18px,4.5vw,22px);
+    color:var(--ember2); direction:rtl;
+    line-height:1; flex-shrink:0;
+  }
+  .howto-pill-sep {
+    font-family:'Courier Prime',monospace;
+    font-size:10px; color:rgba(232,98,26,0.35); flex-shrink:0;
+  }
+  .howto-pill-phonetic {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(13px,3.2vw,15px);
+    color:var(--cream); letter-spacing:0.06em; flex-shrink:0;
+  }
+
+  .howto-close-btn {
+    display:block; width:100%; margin-top:18px;
+    font-family:'EB Garamond',serif; font-style:italic;
+    font-size:clamp(14px,3.8vw,17px); letter-spacing:0.1em;
+    color:var(--ash); background:rgba(255,220,150,0.06);
+    border:1px solid rgba(232,98,26,0.22); border-radius:8px;
+    padding:12px 20px; cursor:pointer; transition:all 0.2s;
+  }
+  .howto-close-btn:hover { background:rgba(232,98,26,0.12); color:var(--fire); border-color:rgba(232,98,26,0.42); }
+
+  /* ── HOW TO PLAY BUTTON (title screen) ── */
+  .howto-trigger-btn {
+    display:block; width:100%; max-width:270px; margin:10px auto 0;
+    font-family:'EB Garamond',serif; font-style:normal;
+    font-size:clamp(13px,3.2vw,15px); letter-spacing:0.02em;
+    color:var(--cream); background:rgba(232,98,26,0.04);
+    border:1.5px solid rgba(232,98,26,0.22); border-radius:8px;
+    padding:9px 6px; cursor:pointer; transition:all 0.2s ease;
+  }
+  .howto-trigger-btn:hover { background:rgba(232,98,26,0.10); color:var(--cream); border-color:rgba(232,98,26,0.42); }
+
   .error-msg { color:var(--red); font-style:italic; font-size:13px; margin-top:8px; min-height:18px; text-align:center; }
   .title-footer { margin-top:12px; font-style:italic; font-size:14px; color:rgba(139,115,85,0.75); letter-spacing:0.06em; text-align:center; line-height:1.6; }
+  .credits { margin-top:10px; font-style:italic; font-size:13px; color:rgba(139,115,85,0.6); letter-spacing:0.06em; text-align:center; }
   .jvl-logo { width:80px; opacity:0.75; display:block; margin:10px auto 0; transition:opacity 0.3s; }
   .jvl-logo:hover { opacity:1; }
 
@@ -564,7 +651,40 @@
   .overlay-score       { font-family:'Courier Prime',monospace; font-weight:700; font-size:clamp(32px,9vw,48px); color:var(--fire); margin-bottom:4px; }
   .overlay-score-label { font-style:italic; font-size:14px; color:var(--parch2); letter-spacing:0.1em; margin-bottom:4px; }
   .overlay-diff-label  { font-style:italic; font-size:13px; color:rgba(201,164,98,0.7); letter-spacing:0.08em; margin-bottom:2px; }
-  .overlay-cats-label  { font-style:italic; font-size:12px; color:rgba(201,164,98,0.55); letter-spacing:0.05em; margin-bottom:18px; line-height:1.6; }
+  .overlay-cats-label  { font-style:italic; font-size:12px; color:rgba(201,164,98,0.55); letter-spacing:0.05em; margin-bottom:12px; line-height:1.6; }
+
+  /* ── ERRORS SECTION ── */
+  .overlay-errors-section {
+    width:100%; margin-bottom:16px;
+  }
+  .overlay-errors-label {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(9px,2vw,11px); letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--ember);
+    opacity:0.75; margin-bottom:8px; text-align:center;
+  }
+  .overlay-errors-grid {
+    display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
+  }
+  .error-pill {
+    display:inline-flex; align-items:center; gap:5px;
+    background:rgba(192,57,43,0.10);
+    border:1px solid rgba(192,57,43,0.28);
+    border-radius:8px; padding:5px 9px 5px 8px;
+  }
+  .error-pill-letter {
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:clamp(20px,5vw,24px);
+    color:var(--ember2); direction:rtl; line-height:1; flex-shrink:0;
+  }
+  .error-pill-arrow {
+    font-size:11px; color:rgba(201,164,98,0.4); flex-shrink:0;
+  }
+  .error-pill-phonetic {
+    font-family:'Courier Prime',monospace;
+    font-size:clamp(13px,3.2vw,15px);
+    color:var(--cream); letter-spacing:0.06em; flex-shrink:0;
+  }
   .again-btn {
     font-family:'EB Garamond',serif; font-style:italic;
     font-size:clamp(14px,3.5vw,18px); letter-spacing:0.1em;
@@ -690,7 +810,7 @@
     </div>
     <img class="lang-picker-footer-logo" src="logolapiz.png" alt="Jevel">
     <div class="lang-picker-jevel-footer">
-      © 2026 Jevel<br>
+      © 2024 Jevel<br>
       Buenos Aires, Argentina <svg class="footer-flag" xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 900 600"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg>
     </div>
   </div>
@@ -810,14 +930,12 @@
     <div style="margin-top:22px;">
       <button class="play-btn" id="play-btn" onclick="startGame()">▶ Shpil — שפּיל</button>
       <div class="error-msg" id="error-msg"></div>
+      <button class="howto-trigger-btn" id="howto-btn" onclick="openHowTo()"><span id="t-howto-btn">Instrucciones</span></button>
     </div>
 
     <div class="title-footer" id="t-footer" style="margin-top:14px;">Escribí el sonido fonético para atrapar cada letra</div>
     <img class="jvl-logo" onclick="confirmLeave()" style="cursor:pointer;" src="image0.png" alt="Jevel">
-    <div class="lang-picker-jevel-footer" style="margin-top:6px;">
-      © 2026 Jevel<br>
-      Buenos Aires, Argentina <svg class="footer-flag" xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 900 600"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg>
-    </div>
+    <div class="credits" id="t-credits">Creado por el sello fonográfico Jevel. Argentina.</div>
   </div>
 </div>
 
@@ -872,6 +990,10 @@
     <div class="overlay-score-label">ניקוד · score</div>
     <div class="overlay-diff-label" id="overlay-diff-label"></div>
     <div class="overlay-cats-label" id="overlay-cats-label"></div>
+    <div class="overlay-errors-section" id="overlay-errors-section" style="display:none;">
+      <div class="overlay-errors-label" id="overlay-errors-label"></div>
+      <div class="overlay-errors-grid" id="overlay-errors-grid"></div>
+    </div>
     <div class="share-section" id="share-section" style="display:none;">
       <div class="share-label" id="share-label"></div>
       <div class="share-row show">
@@ -920,6 +1042,114 @@
   </div>
 </div>
 
+<!-- How To Play modal -->
+<div id="howto-modal">
+  <div class="howto-sheet">
+    <div class="howto-handle"></div>
+    <div class="howto-title" id="howto-modal-title">Cómo jugar</div>
+
+    <!-- 3 instruction cards side by side -->
+    <div class="howto-cards">
+      <div class="howto-card">
+        <div class="howto-card-label" id="howto-label-goal">Objetivo</div>
+        <div class="howto-card-text" id="howto-text-goal">Practicar el alef-beys ídish y que ninguna letra llegue al piso.</div>
+      </div>
+      <div class="howto-card">
+        <div class="howto-card-label" id="howto-label-how">Cómo jugar</div>
+        <div class="howto-card-text" id="howto-text-how">Las letras caen desde arriba. Escribí su fonético (YIVO) antes de que caigan.</div>
+      </div>
+      <div class="howto-card">
+        <div class="howto-card-label" id="howto-label-care">Cuidado</div>
+        <div class="howto-card-text" id="howto-text-care">Si alguna letra toca el piso, perdés vidas.</div>
+      </div>
+    </div>
+
+    <!-- Reference grid -->
+    <div class="howto-ref-label" id="howto-label-ref">Referencia — YIVO</div>
+
+    <div class="howto-groups-grid">
+
+      <div class="howto-group-block">
+        <div class="howto-group-title" id="howto-grp-vowels">Vocales</div>
+        <div class="howto-pills">
+          <div class="howto-pill"><span class="howto-pill-letter">אַ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">a</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">אָ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">o</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ע</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">e</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">י</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">i</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ו</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">u</span></div>
+        </div>
+      </div>
+
+      <div class="howto-group-block">
+        <div class="howto-group-title" id="howto-grp-diph">Diptongos</div>
+        <div class="howto-pills">
+          <div class="howto-pill"><span class="howto-pill-letter">ײ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">ey</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ײַ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">ay</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ױ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">oy</span></div>
+        </div>
+      </div>
+
+      <div class="howto-group-block" style="grid-column:1/-1;">
+        <div class="howto-group-title" id="howto-grp-cons">Consonantes</div>
+        <div class="howto-pills">
+          <div class="howto-pill"><span class="howto-pill-letter">ב</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">b</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ג</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">g</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ד</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">d</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ה</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">h</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ו/װ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">v</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ז</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">z</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ט</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">t</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">י</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">y</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">כ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">kh</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ל</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">l</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">מ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">m</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">נ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">n</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ס</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">s</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">פּ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">p</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">פֿ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">f</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">צ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">ts</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ק</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">k</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ר</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">r</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">sh</span></div>
+        </div>
+      </div>
+
+      <div class="howto-group-block">
+        <div class="howto-group-title" id="howto-grp-finals">Finales</div>
+        <div class="howto-pills">
+          <div class="howto-pill"><span class="howto-pill-letter">ם</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">m</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ן</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">n</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ף</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">f</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ץ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">ts</span></div>
+        </div>
+      </div>
+
+      <div class="howto-group-block">
+        <div class="howto-group-title" id="howto-grp-clusters">Grupos</div>
+        <div class="howto-pills">
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">דזש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">j</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">זש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">g</span></div>
+        </div>
+      </div>
+
+      <div class="howto-group-block" style="grid-column:1/-1;">
+        <div class="howto-group-title" id="howto-grp-lk">Loshn-Koydesh</div>
+        <div class="howto-pills">
+          <div class="howto-pill"><span class="howto-pill-letter">בֿ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">v</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ח</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">kh</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">כּ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">k</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">שׂ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">s</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">תּ</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">t</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter">ת</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">s</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="howto-close-btn" id="howto-close-btn" onclick="closeHowTo()">✕ Cerrar</button>
+  </div>
+</div>
+
 <!-- Easter egg -->
 <div id="easter-egg">
   <div class="ee-box">
@@ -942,6 +1172,7 @@ function initMusic() {
   music.loop = true;
   music.volume = 0.55;
   music.play().catch(() => {
+    // Autoplay blocked — start on very first user interaction of any kind
     const unlock = () => {
       if (musicOn) music.play().catch(()=>{});
     };
@@ -968,7 +1199,7 @@ function toggleMusic() {
 // ══════════════════════════════════════════
 // I18N
 // ══════════════════════════════════════════
-let lang = 'es';
+let lang = 'es'; // default: Spanish
 
 const T = {
   es: {
@@ -982,6 +1213,7 @@ const T = {
     loshnkoydesh: 'Loshn-Koydesh',
     finals:       'Finales',
     footer:       'Escribí el sonido fonético para atrapar cada letra',
+    credits:      'Creado por el sello fonográfico Jevel. Argentina.',
     placeholder:  'Escribí acá y presioná enter...',
     errorEmpty:   'Por favor seleccioná al menos una categoría.',
     hudLevel:     (n) => `Nivel<br><span>${n}</span>`,
@@ -1012,6 +1244,24 @@ const T = {
     scriptTitle:  'Tipografía — שריפֿט',
     printLabel:   'Imprenta',   printSub:   'Cuadrada',
     cursiveLabel: 'Cursiva',    cursiveSub: 'Yidish-khtav',
+    howtoBtn:     'Instrucciones',
+    howtoTitle:   'Instrucciones',
+    howtoLabelGoal:  'Objetivo',
+    howtoTextGoal:   'Practicar el alef-beys ídish y que ninguna letra llegue al piso.',
+    howtoLabelHow:   'Cómo jugar',
+    howtoTextHow:    'Las letras caen desde arriba. Escribí su equivalente fonético (YIVO) antes de que terminen de caer.',
+    howtoLabelCare:  'Cuidado',
+    howtoTextCare:   'Si alguna letra toca el piso, perdés vidas.',
+    howtoLabelRef:   'Referencia — YIVO',
+    howtoGrpVowels:  'Vocales',
+    howtoGrpDiph:    'Diptongos',
+    howtoGrpCons:    'Consonantes',
+    howtoGrpFinals:  'Finales',
+    howtoGrpLK:      'Loshn-Koydesh',
+    howtoGrpClusters:'Grupos de consonantes',
+    howtoClose:      '✕ Cerrar',
+    errorsLabel:     'Recordá que:',
+    errorsNone:      '¡Sin errores!',
   },
   pt: {
     tagline:      'O Jogo · דאָס שפּיל',
@@ -1024,6 +1274,7 @@ const T = {
     loshnkoydesh: 'Loshn-Koydesh',
     finals:       'Finais',
     footer:       'Digite o som fonético para pegar cada letra',
+    credits:      'Criado pelo selo fonográfico Jevel. Argentina.',
     placeholder:  'Escreva aqui e pressione enter...',
     errorEmpty:   'Por favor, selecione pelo menos uma categoria.',
     hudLevel:     (n) => `Nível<br><span>${n}</span>`,
@@ -1054,6 +1305,24 @@ const T = {
     scriptTitle:  'Tipografia — שריפֿט',
     printLabel:   'Imprensa',   printSub:   'Quadrada',
     cursiveLabel: 'Cursiva',    cursiveSub: 'Yidish-khtav',
+    howtoBtn:     'Instruções',
+    howtoTitle:   'Instruções',
+    howtoLabelGoal:  'Objetivo',
+    howtoTextGoal:   'Praticar o alef-beys ídiche e não deixar nenhuma letra tocar o chão.',
+    howtoLabelHow:   'Como jogar',
+    howtoTextHow:    'As letras caem de cima. Digite o equivalente fonético (YIVO) antes que terminem de cair.',
+    howtoLabelCare:  'Atenção',
+    howtoTextCare:   'Se uma letra tocar o chão, você perde vidas.',
+    howtoLabelRef:   'Referência — YIVO',
+    howtoGrpVowels:  'Vogais',
+    howtoGrpDiph:    'Ditongos',
+    howtoGrpCons:    'Consoantes',
+    howtoGrpFinals:  'Finais',
+    howtoGrpLK:      'Loshn-Koydesh',
+    howtoGrpClusters:'Grupos de consoantes',
+    howtoClose:      '✕ Fechar',
+    errorsLabel:     'Lembre-se:',
+    errorsNone:      'Sem erros!',
   },
   en: {
     tagline:      'The Game · דאָס שפּיל',
@@ -1066,6 +1335,7 @@ const T = {
     loshnkoydesh: 'Loshn-Koydesh',
     finals:       'Finals',
     footer:       'Type the phonetic sound to catch each falling letter',
+    credits:      'Created by Jevel record label. Argentina.',
     placeholder:  'Type here and press enter...',
     errorEmpty:   'Please select at least one category.',
     hudLevel:     (n) => `Level<br><span>${n}</span>`,
@@ -1096,6 +1366,24 @@ const T = {
     scriptTitle:  'Script — שריפֿט',
     printLabel:   'Print',      printSub:   'Square',
     cursiveLabel: 'Cursive',    cursiveSub: 'Yidish-khtav',
+    howtoBtn:     'Instructions',
+    howtoTitle:   'Instructions',
+    howtoLabelGoal:  'Goal',
+    howtoTextGoal:   'Practice the Yiddish alef-beys and keep every letter from hitting the floor.',
+    howtoLabelHow:   'How to play',
+    howtoTextHow:    'Letters fall from above. Type their YIVO phonetic equivalent before they reach the bottom.',
+    howtoLabelCare:  'Watch out',
+    howtoTextCare:   'If a letter touches the floor, you lose a life.',
+    howtoLabelRef:   'Reference — YIVO',
+    howtoGrpVowels:  'Vowels',
+    howtoGrpDiph:    'Diphthongs',
+    howtoGrpCons:    'Consonants',
+    howtoGrpFinals:  'Finals',
+    howtoGrpLK:      'Loshn-Koydesh',
+    howtoGrpClusters:'Consonant clusters',
+    howtoClose:      '✕ Close',
+    errorsLabel:     'Remember:',
+    errorsNone:      'No errors!',
   }
 };
 
@@ -1111,6 +1399,7 @@ function applyLang() {
   document.getElementById('cn-loshnkoydesh').textContent= t.loshnkoydesh;
   document.getElementById('cn-finals').textContent    = t.finals;
   document.getElementById('t-footer').textContent     = t.footer;
+  document.getElementById('t-credits').textContent    = t.credits;
   document.getElementById('phonetic-input').placeholder = t.placeholder;
   document.getElementById('t-diff-title').textContent = t.diffTitle;
   document.getElementById('dn-easy').textContent      = t.easyLabel;
@@ -1123,23 +1412,56 @@ function applyLang() {
   document.getElementById('sn-print').textContent     = t.printLabel;
   document.getElementById('sn-cursive').textContent   = t.cursiveLabel;
   document.getElementById('error-msg').textContent    = '';
+  // How To Play modal texts
+  document.getElementById('t-howto-btn').textContent      = t.howtoBtn;
+  document.getElementById('howto-modal-title').textContent = t.howtoTitle;
+  document.getElementById('howto-label-goal').textContent  = t.howtoLabelGoal;
+  document.getElementById('howto-text-goal').textContent   = t.howtoTextGoal;
+  document.getElementById('howto-label-how').textContent   = t.howtoLabelHow;
+  document.getElementById('howto-text-how').textContent    = t.howtoTextHow;
+  document.getElementById('howto-label-care').textContent  = t.howtoLabelCare;
+  document.getElementById('howto-text-care').textContent   = t.howtoTextCare;
+  document.getElementById('howto-label-ref').textContent   = t.howtoLabelRef;
+  document.getElementById('howto-grp-vowels').textContent  = t.howtoGrpVowels;
+  document.getElementById('howto-grp-diph').textContent    = t.howtoGrpDiph;
+  document.getElementById('howto-grp-cons').textContent    = t.howtoGrpCons;
+  document.getElementById('howto-grp-finals').textContent  = t.howtoGrpFinals;
+  document.getElementById('howto-grp-lk').textContent      = t.howtoGrpLK;
+  document.getElementById('howto-grp-clusters').textContent= t.howtoGrpClusters;
+  document.getElementById('howto-close-btn').textContent   = t.howtoClose;
   if (gameRunning) updateHUD();
 }
+
+function openHowTo() {
+  document.getElementById('howto-modal').classList.add('show');
+}
+
+function closeHowTo() {
+  document.getElementById('howto-modal').classList.remove('show');
+}
+
+// Close howto modal on backdrop tap
+document.getElementById('howto-modal').addEventListener('pointerdown', function(e) {
+  if (e.target === this) closeHowTo();
+});
 
 function pickLang(l) {
   lang = l;
   applyLang();
+  // Asegurar que la música arranca con el primer click del usuario
   if (music && musicOn) music.play().catch(() => {});
   const overlay = document.getElementById('fade-overlay');
   const pickerScreen = document.getElementById('lang-picker-screen');
   const titleScreen = document.getElementById('title-screen');
 
+  // 1. Fade to black
   overlay.style.transition = 'opacity 0.7s ease';
   overlay.style.opacity = '1';
 
   overlay.addEventListener('transitionend', function onBlack() {
     overlay.removeEventListener('transitionend', onBlack);
 
+    // 2. Swap instantáneo — desactivar transiciones de .screen
     pickerScreen.style.transition = 'none';
     titleScreen.style.transition = 'none';
     titleScreen.style.opacity = '1';
@@ -1150,6 +1472,7 @@ function pickLang(l) {
     document.getElementById('lang-back-btn').style.display = 'flex';
     document.getElementById('title-share-btn').style.display = 'flex';
 
+    // 3. Fade in cuando el browser pintó el title screen
     requestAnimationFrame(() => requestAnimationFrame(() => {
       overlay.style.transition = 'opacity 0.8s ease';
       overlay.style.opacity = '0';
@@ -1173,12 +1496,14 @@ function goToLangPicker() {
   const pickerScreen = document.getElementById('lang-picker-screen');
   const titleScreen = document.getElementById('title-screen');
 
+  // 1. Fade to black
   overlay.style.transition = 'opacity 0.7s ease';
   overlay.style.opacity = '1';
 
   overlay.addEventListener('transitionend', function onBlack() {
     overlay.removeEventListener('transitionend', onBlack);
 
+    // 2. Swap instantáneo — limpiar inline styles y usar solo clases
     pickerScreen.style.transition = 'none';
     titleScreen.style.transition = 'none';
     titleScreen.style.display = '';
@@ -1189,6 +1514,7 @@ function goToLangPicker() {
     document.getElementById('lang-back-btn').style.display = 'none';
     document.getElementById('title-share-btn').style.display = 'none';
 
+    // 3. Fade in cuando el browser pintó el picker
     requestAnimationFrame(() => requestAnimationFrame(() => {
       overlay.style.transition = 'opacity 0.8s ease';
       overlay.style.opacity = '0';
@@ -1224,10 +1550,12 @@ const LETTER_DATA = {
 // STATE
 // ══════════════════════════════════════════
 let selectedCats  = new Set(['vowels','diphthongs','consonants','clusters','finals','loshnkoydesh']);
-let difficulty    = 'medium';
-let scriptStyle   = 'print';
+let difficulty    = 'medium'; // 'easy' | 'medium' | 'hard'
+let scriptStyle   = 'print';  // 'print' | 'cursive'
 let activeLetters = [];
 let score=0, lives=5, level=1;
+let sessionErrors = {}; // letras que llegaron al piso: key=letter char, val={letter,phonetic,missCount}
+let sessionWrongTypings = {}; // key=letter char, val=count — letras en pantalla cuando se tipió mal
 let gameRunning=false, paused=false;
 let spawnTimer=0, levelTimer=0;
 let animFrame=null, lastTime=0;
@@ -1257,10 +1585,10 @@ function repositionInputBar() {
 }
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', ()=>{
-    if (!gameRunning) { updateVisibleHeight(); repositionInputBar(); }
+    updateVisibleHeight(); repositionInputBar();
   });
   window.visualViewport.addEventListener('scroll', ()=>{
-    if (!gameRunning) { updateVisibleHeight(); repositionInputBar(); }
+    updateVisibleHeight(); repositionInputBar();
   });
 }
 updateVisibleHeight();
@@ -1270,7 +1598,7 @@ function resizeCanvas() {
   canvas.height=bgCanvas.height=window.innerHeight;
   updateVisibleHeight();
 }
-window.addEventListener('resize', () => { if (!gameRunning) resizeCanvas(); });
+window.addEventListener('resize', () => { resizeCanvas(); });
 resizeCanvas();
 
 // ══════════════════════════════════════════
@@ -1334,7 +1662,7 @@ function buildPool() {
   const seen=new Set(); pool=[];
   for (const cat of selectedCats)
     for (const item of LETTER_DATA[cat])
-      if (!seen.has(item.letter)) { seen.add(item.letter); pool.push(item); }
+      if (!seen.has(item.letter)) { seen.add(item.letter); pool.push({...item, cat}); }
 }
 
 function setScript(s) {
@@ -1356,6 +1684,8 @@ function startGame() {
   if (!selectedCats.size) { document.getElementById('error-msg').textContent=t.errorEmpty; return; }
   buildPool();
   score=0;lives=5;level=1;activeLetters=[];spawnTimer=999;levelTimer=0;burstCooldown=0;burstPending=0;
+  sessionErrors = {}; // letra → { letter, phonetic, missCount }
+  sessionWrongTypings = {}; // letra → count
   cancelAnimationFrame(bgFrame); bgFrame=null;
   const titleScreen = document.getElementById('title-screen');
   titleScreen.style.display = '';
@@ -1374,6 +1704,7 @@ function startGame() {
   animFrame=requestAnimationFrame(gameLoop);
   const inp=document.getElementById('phonetic-input');
   inp.value=''; inp.placeholder=t.placeholder;
+  // game keyboard used — do not focus input (prevents system keyboard)
   if (document.activeElement) document.activeElement.blur();
   repositionInputBar();
 }
@@ -1390,6 +1721,7 @@ function gameLoop(ts) {
 }
 
 function getLevelParams() {
+  // Speed as fraction of visibleHeight/sec — screen-size independent
   const presets = {
     easy:   { baseSpeed:0.10, speedInc:0,     baseSpawn:5.2, spawnDec:0    },
     medium: { baseSpeed:0.16, speedInc:0,     baseSpawn:3.6, spawnDec:0    },
@@ -1404,19 +1736,25 @@ function getLevelParams() {
   };
 }
 
+// Extra burst letter injection
+// burstCooldown: time until the next burst is allowed
+// burstPending: short delay before burst letter spawns (feels like a quick follow-up)
 let burstCooldown  = 0;
 let burstPending   = 0;
 
 function getBurstChance() {
+  // Returns probability (0–1) of triggering a burst after a regular spawn
+  // Grows with level. Easy: never. Medium: rare at first, grows. Hard: more frequent.
   if (difficulty === 'easy')   return 0;
-  if (difficulty === 'medium') return Math.min(0.08 + (level - 1) * 0.04, 0.35);
-  if (difficulty === 'hard')   return Math.min(0.25 + (level - 1) * 0.10, 0.80);
+  if (difficulty === 'medium') return Math.min(0.08 + (level - 1) * 0.04, 0.35); // 8%→35%
+  if (difficulty === 'hard')   return Math.min(0.25 + (level - 1) * 0.10, 0.80); // 25%→80%
   return 0;
 }
 
 function getBurstDelay() {
-  if (difficulty === 'medium') return 0.35 + Math.random() * 0.25;
-  if (difficulty === 'hard')   return 0.12 + Math.random() * 0.15;
+  // Short delay before burst letter appears (seconds)
+  if (difficulty === 'medium') return 0.35 + Math.random() * 0.25; // 0.35–0.60s
+  if (difficulty === 'hard')   return 0.12 + Math.random() * 0.15; // 0.12–0.27s
   return 0.4;
 }
 
@@ -1432,18 +1770,22 @@ function updateGame(dt) {
   levelTimer+=dt;
   if (levelTimer>20) { level++; levelTimer=0; updateHUD(); }
 
+  // Regular spawn
   spawnTimer+=dt;
   if (spawnTimer>=spawnInterval && activeLetters.length<maxLetters) {
     spawnTimer=0;
     spawnLetter(W,speed);
+    // Roll for a burst follow-up
     if (burstCooldown<=0 && Math.random()<getBurstChance()) {
       burstPending  = getBurstDelay();
-      burstCooldown = spawnInterval * 1.5;
+      burstCooldown = spawnInterval * 1.5; // don't burst again too soon
     }
   }
 
+  // Burst cooldown
   if (burstCooldown>0) burstCooldown-=dt;
 
+  // Pending burst letter
   if (burstPending>0) {
     burstPending-=dt;
     if (burstPending<=0 && activeLetters.length<maxLetters) {
@@ -1456,7 +1798,13 @@ function updateGame(dt) {
     const l=activeLetters[i];
     l.y+=l.speed*dt;
     if (l.shake>0) l.shake=Math.max(0,l.shake-dt*4);
-    if (l.y>=floor) { activeLetters.splice(i,1); loseLife(); }
+    if (l.y>=floor) {
+      // registro: letra que llegó al piso
+      const key = l.letter;
+      if (!sessionErrors[key]) sessionErrors[key] = { letter: l.letter, phonetic: l.phonetic, missCount: 0 };
+      sessionErrors[key].missCount++;
+      activeLetters.splice(i,1); loseLife();
+    }
   }
 }
 
@@ -1464,7 +1812,7 @@ function spawnLetter(W,speed) {
   const item=pool[Math.floor(Math.random()*pool.length)];
   const size=W<480?34:48; const margin=size*1.5;
   const variance = visibleHeight * 0.03;
-  activeLetters.push({ letter:item.letter, phonetic:item.phonetic, x:margin+Math.random()*(W-margin*2), y:-52, speed:speed+(Math.random()-.5)*2*variance, size, wobble:Math.random()*Math.PI*2, flash:0, shake:0 });
+  activeLetters.push({ letter:item.letter, phonetic:item.phonetic, cat:item.cat, x:margin+Math.random()*(W-margin*2), y:-52, speed:speed+(Math.random()-.5)*2*variance, size, wobble:Math.random()*Math.PI*2, flash:0, shake:0 });
 }
 
 function drawGame() {
@@ -1474,7 +1822,7 @@ function drawGame() {
   ctx.beginPath(); ctx.moveTo(0,floor); ctx.lineTo(W,floor); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
   for (const l of activeLetters) {
     ctx.save();
-    l.wobble += 0.04;
+    l.wobble += 0.04; // advance wobble each frame so border animates
     const shakeX = (l.shake>0) ? Math.sin(l.shake*40)*6*l.shake : 0;
     ctx.translate(l.x + shakeX, l.y);
     const isFlash=l.flash>0;
@@ -1496,18 +1844,22 @@ function drawGame() {
 const inp=document.getElementById('phonetic-input');
 inp.addEventListener('keydown',e=>{ 
   if(e.key==='Enter') { e.preventDefault(); submitAnswer(); }
-  else if(e.key.length===1) { e.preventDefault(); }
+  else if(e.key.length===1) { e.preventDefault(); } // block native insertion; handled by document listener
 });
 
+// Physical keyboard → highlight and trigger on-screen key
 document.addEventListener('keydown', function(e) {
   if (!gameRunning || paused) return;
+  // Blur any focused button so Enter can't trigger it
   if (document.activeElement && document.activeElement !== document.body) {
     document.activeElement.blur();
   }
   if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); return; }
   if (e.key === 'Backspace') { e.preventDefault(); kbBack(); return; }
+  // Only single printable characters
   if (e.key.length !== 1) return;
   const ch = e.key.toLowerCase();
+  // Only handle keys that exist on the on-screen keyboard (ignore ñ, é, etc.)
   const btn = Array.from(document.querySelectorAll('#kb-rows .kb-key')).find(function(b){ return b.textContent === ch; });
   if (btn) {
     kbPress(ch, btn);
@@ -1522,7 +1874,34 @@ function submitAnswer() {
   if (bestIdx>=0) {
     const l=activeLetters[bestIdx]; burstParticles(l.x,l.y,l.letter); scorePopup(l.x,l.y,'+'+getPoints());
     score+=getPoints(); activeLetters.splice(bestIdx,1); flashInput('correct');
-  } else { flashInput('wrong'); showHint(val); shakeLetters(); }
+  } else {
+    flashInput('wrong'); showHint(val); shakeLetters();
+    if (activeLetters.length > 0) {
+      // Buscar en el pool a qué categoría pertenece la fonética tipeada
+      const poolMatch = pool.find(x => x.phonetic === val);
+      const typedCat = poolMatch ? poolMatch.cat : null;
+
+      // Ver qué categorías hay en pantalla
+      const catsOnScreen = new Set(activeLetters.map(l => l.cat));
+
+      let targetCat = null;
+      if (typedCat && catsOnScreen.has(typedCat)) {
+        // La categoría de lo tipeado está en pantalla → usarla
+        targetCat = typedCat;
+      } else {
+        // Fallback: categoría más frecuente en pantalla
+        const catCount = {};
+        for (const l of activeLetters) catCount[l.cat] = (catCount[l.cat] || 0) + 1;
+        targetCat = Object.keys(catCount).reduce((a, b) => catCount[a] >= catCount[b] ? a : b);
+      }
+
+      for (const l of activeLetters) {
+        if (l.cat === targetCat) {
+          sessionWrongTypings[l.letter] = (sessionWrongTypings[l.letter] || 0) + 1;
+        }
+      }
+    }
+  }
   inp.value=''; updateKbDisplay(); updateHUD();
 }
 
@@ -1564,7 +1943,49 @@ function endGame(won) {
     document.getElementById('overlay-cats-label').textContent = '';
   }
   document.getElementById('again-btn').textContent       =t.backToTitle;
+
+  // ── Sección "Recordá que:" ──
+  const errSection = document.getElementById('overlay-errors-section');
+  const errGrid    = document.getElementById('overlay-errors-grid');
+  const errLabel   = document.getElementById('overlay-errors-label');
+  errLabel.textContent = t.errorsLabel;
+  errGrid.innerHTML = '';
+
+  // Construir score de dificultad para cada letra del pool:
+  // - missCount: veces que esa letra llegó al piso (peso alto)
+  // - wrongTypings: veces que se tipió incorrectamente su fonética (peso menor)
+  // Letras con la misma fonética comparten los wrongTypings de esa fonética.
+  const difficultyMap = {};
+  for (const item of pool) {
+    const key = item.letter;
+    const missCount = sessionErrors[key] ? sessionErrors[key].missCount : 0;
+    const wrongsForLetter = sessionWrongTypings[key] || 0;
+    const score = missCount * 100 + wrongsForLetter * 1;
+    if (score > 2) {
+      difficultyMap[key] = { letter: item.letter, phonetic: item.phonetic, score };
+    }
+  }
+
+  const difficultyList = Object.values(difficultyMap);
+  if (difficultyList.length === 0) {
+    errGrid.innerHTML = `<span style="font-style:italic;font-size:14px;color:var(--parch2);opacity:0.7;">${t.errorsNone}</span>`;
+  } else {
+    // Letras con 100+ puntos (cayeron al piso): aparecen todas
+    // Letras con 3-99 puntos (solo tipeos incorrectos): top 5
+    const floorHits  = difficultyList.filter(e => e.score >= 100).sort((a,b) => b.score - a.score);
+    const typingOnly = difficultyList.filter(e => e.score < 100).sort((a,b) => b.score - a.score).slice(0,5);
+    const toShow = [...floorHits, ...typingOnly];
+    for (const err of toShow) {
+      const pill = document.createElement('div');
+      pill.className = 'error-pill';
+      pill.innerHTML = `<span class="error-pill-letter">${err.letter}</span><span class="error-pill-arrow">→</span><span class="error-pill-phonetic">${err.phonetic}</span>`;
+      errGrid.appendChild(pill);
+    }
+  }
+  errSection.style.display = 'block';
+
   document.getElementById('overlay-screen').classList.remove('hidden');
+  // Share section: only on loss
   const shareSection = document.getElementById('share-section');
   const shareLabel   = document.getElementById('share-label');
   if (!won) {
@@ -1604,6 +2025,7 @@ function returnToTitle() {
   document.getElementById('title-share-btn').style.display = 'flex';
   document.getElementById('music-btn').classList.add('on-title');
   const _db2=document.getElementById('diff-below'); if(_db2) _db2.textContent='';
+  document.getElementById('score-display').textContent='0';
   ctx.clearRect(0,0,canvas.width,canvas.height);
   bgLastT=performance.now(); bgFrame=requestAnimationFrame(bgLoop);
 }
@@ -1626,6 +2048,7 @@ function confirmLeaveNo() {
 }
 
 function confirmHome() {
+  // Pause silently while modal is open
   if (!gameRunning) return;
   if (!paused) { paused=true; document.getElementById('pause-btn').textContent='▶'; }
   document.getElementById('confirm-modal').classList.add('show');
@@ -1639,6 +2062,7 @@ function confirmYes() {
 
 function confirmNo() {
   document.getElementById('confirm-modal').classList.remove('show');
+  // Resume game
   paused=false;
   lastTime=performance.now();
   document.getElementById('pause-btn').textContent='⏸';
@@ -1693,8 +2117,9 @@ function scorePopup(x,y,txt) {
 }
 
 function shakeLetters() {
+  // Give all visible letters a shake offset sequence
   for (const l of activeLetters) {
-    l.shake = 1.0;
+    l.shake = 1.0; // will decay over time
   }
 }
 
@@ -1729,6 +2154,9 @@ function closeEasterEgg() {
 // ══════════════════════════════════════════
 // CUSTOM KEYBOARD
 // ══════════════════════════════════════════
+
+// All possible phonetic keys in display order
+// True QWERTY layout
 const QWERTY_ROWS = [
   ['q','w','e','r','t','y','u','i','o','p'],
   ['a','s','d','f','g','h','j','k','l'],
@@ -1753,6 +2181,7 @@ function buildKeyboard() {
     kb.appendChild(rowEl);
   }
 
+  // Action row: ⌫ + ENTER
   const actionRow = document.createElement('div');
   actionRow.className = 'kb-row';
 
@@ -1795,9 +2224,11 @@ function updateKbDisplay() {
 function showKeyboard() {
   const kb = document.getElementById('game-keyboard');
   kb.classList.remove('hidden');
+  // Force layout, measure height synchronously, then lock it — no mid-game changes
   const h = kb.getBoundingClientRect().height || kb.offsetHeight;
   document.documentElement.style.setProperty('--kb-height', h + 'px');
   document.body.classList.add('kb-active');
+  // Update visibleHeight NOW before the game loop starts, so floor never shifts
   updateVisibleHeight();
 }
 
@@ -1814,6 +2245,7 @@ applyLang();
 initMusic();
 document.getElementById('music-btn').classList.add('on-title');
 
+// ── BROWSER EXIT WARNING ──────────────────────────────────────────────────────
 window.addEventListener('beforeunload', function(e) {
   if (gameRunning) {
     e.preventDefault();
