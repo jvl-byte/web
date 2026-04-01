@@ -12,7 +12,6 @@ const translations = {
     releaseDesc: "Una sesión klezmer en Buenos Aires, 2024.",
     listenNow: "Escuchar ahora",
     gameLabel: "el juego",
-    gameSubtitle: "komets-aleph — ¡oy vey!",
     gameDesc1: "Inspirado en la <em>folk lid</em> de Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: El Juego</strong> es una manera entretenida de practicar el alef-beys.",
     gameDesc2: "Con tres niveles de dificultad y desafíos personalizables, avanzás a tu ritmo.",
     feat1: "Vocales",
@@ -23,9 +22,7 @@ const translations = {
     feat6: "Loshn-Koydesh",
     feat7: "Cuadrada / Cursiva",
     playBtn: "Jugar",
-    downloadBtn: "Bajar",
     contactLabel: "Links y contacto",
-    footerText: "© 2024 Jevel Discos",
   },
   en: {
     tagline: "Jevel is an independent Yiddish and klezmer music label.",
@@ -34,7 +31,6 @@ const translations = {
     releaseDesc: "A klezmer session in Buenos Aires, 2024.",
     listenNow: "Listen now",
     gameLabel: "the game",
-    gameSubtitle: "komets-aleph — oy vey!",
     gameDesc1: "Inspired by the <em>folk lid</em> by Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: The Game</strong> is a fun way to practice the alef-beys.",
     gameDesc2: "With three difficulty levels and customizable challenges, you progress at your own pace.",
     feat1: "Vowels",
@@ -45,9 +41,7 @@ const translations = {
     feat6: "Loshn-Koydesh",
     feat7: "Square / Cursive",
     playBtn: "Play",
-    downloadBtn: "Download",
     contactLabel: "Links & contact",
-    footerText: "© 2024 Jevel Discos",
   },
   pt: {
     tagline: "Jevel é um selo independente de música ídiche e klezmer.",
@@ -56,7 +50,6 @@ const translations = {
     releaseDesc: "Uma sessão klezmer em Buenos Aires, 2024.",
     listenNow: "Ouvir agora",
     gameLabel: "o jogo",
-    gameSubtitle: "komets-aleph — oi vei!",
     gameDesc1: "Inspirado na <em>folk lid</em> de Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: O Jogo</strong> é uma forma divertida de praticar o alef-beys.",
     gameDesc2: "Com três níveis de dificuldade e desafios personalizáveis, você avança no seu ritmo.",
     feat1: "Vogais",
@@ -67,9 +60,7 @@ const translations = {
     feat6: "Loshn-Koydesh",
     feat7: "Quadrada / Cursiva",
     playBtn: "Jogar",
-    downloadBtn: "Baixar",
     contactLabel: "Links e contato",
-    footerText: "© 2024 Jevel Discos",
   }
 };
 
@@ -184,22 +175,6 @@ function setupTilt() {
   });
 }
 
-// ---- FOOTER REVEAL ----
-function setupFooter() {
-  const yiddish = document.querySelector('.footer-yiddish');
-  if (!yiddish) return;
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        yiddish.style.transition = 'opacity 1.5s ease';
-        yiddish.style.opacity = '0.55';
-      }
-    });
-  }, { threshold: 0.5 });
-
-  observer.observe(yiddish);
-}
 
 // ---- AUDIO PLAYER ----
 function setupAudio() {
@@ -234,29 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLangSwitcher();
   setupReveal();
   setupTilt();
-  setupFooter();
   setupAudio();
   console.log('Jevel initialized successfully');
 });
-
-// ---- BLOB DOWNLOAD ----
-function downloadGame() {
-  fetch('oyfnpripetshik.html')
-    .then(res => {
-      if (!res.ok) throw new Error('File not found');
-      return res.blob();
-    })
-    .then(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'oyfnpripetshik.html';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    })
-    .catch(() => {
-      alert('No se encontró el archivo oyfnpripetshik.html en el directorio.');
-    });
-}
