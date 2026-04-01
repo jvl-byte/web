@@ -753,14 +753,23 @@
 
   /* ── MOBILE ── */
   @media (max-width:480px) {
-    #title-screen     { padding:10px 14px; padding-top:14px; }
+    #title-screen     { padding:8px 12px; padding-top:10px; }
     .yiddish-title    { font-size:clamp(22px,9vw,36px); }
     .latin-title      { font-size:clamp(13px,4vw,18px); }
-    .title-tagline    { font-size:11px; margin-bottom:14px; }
-    .category-grid    { gap:5px; }
-    .category-item    { padding:4px 8px 4px 6px; }
-    .cat-name         { font-size:13px; }
-    .play-btn         { font-size:14px; padding:11px 24px; }
+    .flame-row        { margin-bottom:2px; }
+    .title-tagline    { font-size:11px; margin-top:2px; margin-bottom:10px; }
+    .verse-strip      { font-size:12px; padding:5px 10px; margin-bottom:12px; }
+    .menu-divider     { margin:10px 0 8px; }
+    .category-grid    { grid-template-columns:1fr 1fr; gap:5px; }
+    .category-item    { padding:6px 8px; }
+    .cat-name         { font-size:12px; white-space:normal; line-height:1.2; }
+    .cat-example      { font-size:12px; }
+    .script-panel     { margin-bottom:10px; }
+    .difficulty-panel { margin-bottom:10px; }
+    .diff-btn         { padding:7px 4px; }
+    .diff-emoji       { font-size:16px; }
+    .diff-label       { font-size:13px; }
+    .play-btn         { font-size:14px; padding:10px 24px; }
     #hud              { padding:6px 12px 5px; }
     .heart            { font-size:15px; }
     .hud-score        { font-size:16px; }
@@ -1127,9 +1136,8 @@
       <div class="howto-group-block">
         <div class="howto-group-title" id="howto-grp-clusters">Grupos</div>
         <div class="howto-pills">
-          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">דזש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">dzh</span></div>
-          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">זש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">zh</span></div>
-          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">טש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">tsh</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">דזש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">j</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">זש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">g</span></div>
         </div>
       </div>
 
@@ -1441,7 +1449,10 @@ function closeHowTo() {
   document.getElementById('howto-modal').classList.remove('show');
 }
 
-// howto modal only closes via the close button
+// Close howto modal on backdrop tap
+document.getElementById('howto-modal').addEventListener('pointerdown', function(e) {
+  if (e.target === this) closeHowTo();
+});
 
 function pickLang(l) {
   lang = l;
@@ -1535,7 +1546,7 @@ const LETTER_DATA = {
     {letter:'ק',phonetic:'k'},{letter:'ר',phonetic:'r'},{letter:'ש',phonetic:'sh'},
   ],
   clusters: [
-    {letter:'דזש',phonetic:'dzh'},{letter:'זש',phonetic:'zh'},{letter:'טש',phonetic:'tsh'},
+    {letter:'דזש',phonetic:'j'},{letter:'זש',phonetic:'g'},{letter:'טש',phonetic:'ch'},
   ],
   loshnkoydesh: [
     {letter:'בֿ',phonetic:'v'},{letter:'ח',phonetic:'kh'},{letter:'כּ',phonetic:'k'},
