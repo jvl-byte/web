@@ -1127,8 +1127,9 @@
       <div class="howto-group-block">
         <div class="howto-group-title" id="howto-grp-clusters">Grupos</div>
         <div class="howto-pills">
-          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">דזש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">j</span></div>
-          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">זש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">g</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">דזש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">dzh</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">זש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">zh</span></div>
+          <div class="howto-pill"><span class="howto-pill-letter" style="font-size:clamp(14px,3.5vw,17px);">טש</span><span class="howto-pill-sep">·</span><span class="howto-pill-phonetic">tsh</span></div>
         </div>
       </div>
 
@@ -1440,10 +1441,7 @@ function closeHowTo() {
   document.getElementById('howto-modal').classList.remove('show');
 }
 
-// Close howto modal on backdrop tap
-document.getElementById('howto-modal').addEventListener('pointerdown', function(e) {
-  if (e.target === this) closeHowTo();
-});
+// howto modal only closes via the close button
 
 function pickLang(l) {
   lang = l;
@@ -1537,7 +1535,7 @@ const LETTER_DATA = {
     {letter:'ק',phonetic:'k'},{letter:'ר',phonetic:'r'},{letter:'ש',phonetic:'sh'},
   ],
   clusters: [
-    {letter:'דזש',phonetic:'j'},{letter:'זש',phonetic:'g'},{letter:'טש',phonetic:'ch'},
+    {letter:'דזש',phonetic:'dzh'},{letter:'זש',phonetic:'zh'},{letter:'טש',phonetic:'tsh'},
   ],
   loshnkoydesh: [
     {letter:'בֿ',phonetic:'v'},{letter:'ח',phonetic:'kh'},{letter:'כּ',phonetic:'k'},
