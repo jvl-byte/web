@@ -220,6 +220,12 @@ body::before {
   align-items: center;
 }
 
+.release-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .cover-link {
   display: block;
   text-decoration: none;
@@ -379,6 +385,12 @@ body::before {
   grid-template-columns: 1.3fr 1fr;
   gap: 4rem;
   align-items: center;
+}
+
+.game-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .game-title {
@@ -582,14 +594,6 @@ body::before {
   margin-bottom: 0.9rem;
 }
 
-.footer-yiddish {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  color: var(--ink);
-  opacity: 0.2;
-  letter-spacing: 0.05em;
-}
-
 /* ---- ANIMATIONS ---- */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -652,27 +656,6 @@ body::before {
   flex-wrap: wrap;
 }
 
-.btn-download {
-  cursor: pointer;
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(242,237,228,0.7);
-  background: transparent;
-  border: 1.5px solid rgba(242,237,228,0.35);
-  padding: 0.85rem 1.6rem;
-  text-decoration: none;
-  transition: color 0.15s, border-color 0.15s;
-  position: relative;
-}
-
-.btn-download:hover {
-  color: var(--paper);
-  border-color: rgba(242,237,228,0.7);
-}
-
 /* ---- FOOTER LOGO ---- */
 .footer-logo-wrap {
   margin-bottom: 1.6rem;
@@ -729,4 +712,13 @@ body::before {
   flex-shrink: 0;
   opacity: 0.85;
   mix-blend-mode: multiply;
+}
+
+/* ---- FOOTER LOCATION ---- */
+.footer-location {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--mid);
+  margin-top: 0.4rem;
 }
