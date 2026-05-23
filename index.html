@@ -23,20 +23,20 @@
 
 .recordbox-item {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 1.1rem 0;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+  gap: 0;
   border-bottom: 1px solid rgba(26,18,9,0.12);
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.5s, transform 0.5s, border-color 0.2s;
   position: relative;
+  overflow: hidden;
 }
 .recordbox-item::before {
   content: '';
   position: absolute;
-  left: -1rem;
+  left: 0;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -48,10 +48,46 @@
 .recordbox-item:hover::before { transform: scaleY(1); }
 .recordbox-item.visible { opacity: 1; transform: translateY(0); }
 
+.recordbox-cover {
+  width: auto;
+  aspect-ratio: 1;
+  align-self: stretch;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-right: 1px solid rgba(26,18,9,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dark);
+}
+.recordbox-cover img {
+  height: 100%;
+  width: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.05) saturate(0.9);
+  transition: filter 0.3s;
+}
+.recordbox-item:hover .recordbox-cover img { filter: contrast(1.1) saturate(1); }
+.recordbox-cover-placeholder {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--mid);
+  opacity: 0.4;
+  width: 60px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .recordbox-left {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  padding: 1rem 1.2rem;
+  justify-content: center;
 }
 .recordbox-artista {
   font-family: var(--font-mono);
@@ -77,6 +113,7 @@
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
+  padding: 1rem 1.2rem;
 }
 .recordbox-año {
   font-family: var(--font-mono);
@@ -107,11 +144,10 @@
 }
 
 @media (max-width: 600px) {
-  .recordbox-item {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-  .recordbox-right { justify-content: flex-start; }
+  .recordbox-cover-placeholder { width: 48px; }
+  .recordbox-left { padding: 0.8rem; }
+  .recordbox-right { padding: 0.8rem 0.8rem 0.8rem 0; gap: 0.6rem; }
+  .recordbox-año { display: none; }
 }
 </style>
 </head>
@@ -259,6 +295,11 @@
     const data = await r.json();
     const lang = localStorage.getItem('jevel-language') || 'es';
 
+    // Helper: obtener reseña vinculada a un disco
+    const getReseña = (disco) => disco.reseñaId
+      ? (data.reseñas || []).find(r => r.id === disco.reseñaId)
+      : null;
+
     // ---- DESTACADO ----
     const disco = (data.discos || []).find(d => d.destacado);
     if (disco) {
@@ -289,6 +330,7 @@
                  <span class="btn-arrow">→</span>
                </a>`
             : ''}
+          ${(() => { const res = getReseña(disco); return res && res.url ? `<a href="${res.url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;border-bottom:1px solid var(--mid);margin-top:0.8rem;transition:color 0.15s,border-color 0.15s" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--mid)';this.style.borderColor='var(--mid)'">✦ Reseña: ${res.medio}</a>` : ''; })()}
         </div>`;
 
       if (typeof setLanguage === 'function') setLanguage(lang);
@@ -304,19 +346,26 @@
       return;
     }
 
-    list.innerHTML = recordbox.map((d, i) => `
+    list.innerHTML = recordbox.map((d, i) => {
+      const coverHtml = d.cover
+        ? `<img src="${d.cover}" alt="${d.subtitulo || d.titulo}" onerror="this.parentElement.innerHTML='<span class=\\'recordbox-cover-placeholder\\'>✦</span>'" />`
+        : `<span class="recordbox-cover-placeholder">✦</span>`;
+      return `
       <li class="recordbox-item" style="transition-delay:${i * 0.06}s">
+        <div class="recordbox-cover">${coverHtml}</div>
         <div class="recordbox-left">
           ${d.artista    ? `<span class="recordbox-artista">${d.artista}</span>` : ''}
           <span class="recordbox-titulo">${d.titulo || ''}${d.subtitulo ? ` <span class="recordbox-subtitulo">${d.subtitulo}</span>` : ''}</span>
         </div>
         <div class="recordbox-right">
           ${d.año ? `<span class="recordbox-año">${d.año}</span>` : ''}
+          ${(() => { const res = getReseña(d); return res && res.url ? `<a class="recordbox-link" href="${res.url}" target="_blank" rel="noopener">Reseña →</a>` : ''; })()}
           ${d.bandcamp
             ? `<a class="recordbox-link" href="${d.bandcamp}" target="_blank" rel="noopener">Bandcamp →</a>`
             : ''}
         </div>
-      </li>`).join('');
+      </li>`;
+    }).join('');
 
     // Reveal on scroll
     const observer = new IntersectionObserver(entries => {
