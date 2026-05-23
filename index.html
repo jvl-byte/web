@@ -1,136 +1,335 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jevel</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jevel</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ---- RECORD BOX ---- */
+.recordbox {
+  padding: 5rem 2rem;
+  border-bottom: 2px solid var(--ink);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.recordbox-list {
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+
+.recordbox-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(26,18,9,0.12);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s, transform 0.5s, border-color 0.2s;
+  position: relative;
+}
+.recordbox-item::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.22,1,0.36,1);
+  transform-origin: bottom;
+}
+.recordbox-item:hover::before { transform: scaleY(1); }
+.recordbox-item.visible { opacity: 1; transform: translateY(0); }
+
+.recordbox-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.recordbox-artista {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--mid);
+}
+.recordbox-titulo {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.recordbox-subtitulo {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mid);
+  letter-spacing: 0.08em;
+}
+
+.recordbox-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.recordbox-año {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mid);
+  letter-spacing: 0.1em;
+}
+.recordbox-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 0.05rem;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.recordbox-link:hover { color: var(--accent); border-color: var(--accent); }
+
+.recordbox-empty {
+  padding: 3rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--mid);
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 600px) {
+  .recordbox-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .recordbox-right { justify-content: flex-start; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Language Switcher -->
-  <div class="lang-switcher">
-    <button class="lang-btn active" data-lang="es">Español</button>
-    <button class="lang-btn" data-lang="pt">Português</button>
-    <button class="lang-btn" data-lang="en">English</button>
+<!-- Language Switcher -->
+<div class="lang-switcher">
+  <button class="lang-btn active" data-lang="es">Español</button>
+  <button class="lang-btn" data-lang="pt">Português</button>
+  <button class="lang-btn" data-lang="en">English</button>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="noise-overlay"></div>
+  <div class="hero-inner">
+    <div class="logo-wrap">
+      <img src="rca.png" alt="Jevel" class="logo" />
+      <button class="gram-play-btn" id="audioPlayBtn" aria-label="Reproducir">
+        <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24"><polygon points="5,3 5,21 21,12" fill="#1a1209"/></svg>
+        <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" style="display:none"><rect x="4" y="3" width="5" height="18" fill="#1a1209"/><rect x="15" y="3" width="5" height="18" fill="#1a1209"/></svg>
+      </button>
+      <audio id="audioPlayer" src="muchoojo.mp3"></audio>
+    </div>
+    <p class="tagline" data-i18n="tagline">
+      Jevel es un sello independiente de música ídish y klezmer.
+    </p>
+    <div class="deco-line"></div>
   </div>
+  <div class="scroll-hint">↓</div>
+</header>
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="noise-overlay"></div>
-    <div class="hero-inner">
-      <div class="logo-wrap">
-        <img src="rca.png" alt="Jevel" class="logo" />
-        <button class="gram-play-btn" id="audioPlayBtn" aria-label="Reproducir">
-          <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24"><polygon points="5,3 5,21 21,12" fill="#1a1209"/></svg>
-          <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" style="display:none"><rect x="4" y="3" width="5" height="18" fill="#1a1209"/><rect x="15" y="3" width="5" height="18" fill="#1a1209"/></svg>
-        </button>
-        <audio id="audioPlayer" src="muchoojo.mp3"></audio>
+<!-- NEW RELEASE -->
+<section class="release" id="release">
+  <div class="section-label" data-i18n="newRelease">nuevo lanzamiento</div>
+  <div class="release-inner" id="release-inner">
+    <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
+      <div class="cover-wrap">
+        <img src="Mateshpil-cover.jpg" alt="Mateshpil" class="cover-img" />
+        <div class="cover-overlay">
+          <span data-i18n="listenBandcamp">Escuchar en Bandcamp →</span>
+        </div>
       </div>
-      <p class="tagline" data-i18n="tagline">
-        Jevel es un sello independiente de música ídish y klezmer.
+    </a>
+    <div class="release-info">
+      <h2 class="release-title">מאַטעשפּיל</h2>
+      <h3 class="release-subtitle">Mateshpil</h3>
+      <p class="release-artist">Julián Brenlle &amp; Klezmer Três Rios</p>
+      <p class="release-desc" data-i18n="releaseDesc">
+        Una sesión klezmer en Buenos Aires, 2024.
       </p>
-      <div class="deco-line"></div>
-    </div>
-    <div class="scroll-hint">↓</div>
-  </header>
-
-  <!-- NEW RELEASE -->
-  <section class="release" id="release">
-    <div class="section-label" data-i18n="newRelease">nuevo lanzamiento</div>
-    <div class="release-inner">
-      <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
-        <div class="cover-wrap">
-          <img src="Mateshpil-cover.jpg" alt="Mateshpil" class="cover-img" />
-          <div class="cover-overlay">
-            <span data-i18n="listenBandcamp">Escuchar en Bandcamp →</span>
-          </div>
-        </div>
+      <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="btn-bandcamp">
+        <span data-i18n="listenNow">Escuchar ahora</span>
+        <span class="btn-arrow">→</span>
       </a>
-      <div class="release-info">
-        <h2 class="release-title">מאַטעשפּיל</h2>
-        <h3 class="release-subtitle">Mateshpil</h3>
-        <p class="release-artist">Julián Brenlle &amp; Klezmer Três Rios</p>
-        <p class="release-desc" data-i18n="releaseDesc">
-          Una sesión klezmer en Buenos Aires, 2024.
-        </p>
-        <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="btn-bandcamp">
-          <span data-i18n="listenNow">Escuchar ahora</span>
-          <span class="btn-arrow">→</span>
+    </div>
+  </div>
+  <div class="section-ornament">✦</div>
+</section>
+
+<!-- RECORD BOX -->
+<section class="recordbox" id="recordbox">
+  <div class="section-label">catálogo</div>
+  <ul class="recordbox-list" id="recordbox-list">
+    <li class="recordbox-empty">Cargando...</li>
+  </ul>
+  <div class="section-ornament">✦</div>
+</section>
+
+<!-- GAME SECTION -->
+<section class="game" id="game">
+  <div class="game-inner">
+    <div class="game-text">
+      <div class="section-label" data-i18n="gameLabel">el juego</div>
+      <h2 class="game-title">Oyfn Pripetshik</h2>
+      <div class="game-desc">
+        <p data-i18n="gameDesc1">Inspirado en la <em>folk lid</em> de Mark Markovich Warshawsky, este juego para celular y escritorio es una manera entretenida de practicar el alef-beys.</p>
+        <p data-i18n="gameDesc2">Con tres niveles de dificultad y desafíos personalizables, avanzás a tu ritmo.</p>
+      </div>
+      <div class="game-features">
+        <span data-i18n="feat1">Vocales</span>
+        <span data-i18n="feat2">Diptongos</span>
+        <span data-i18n="feat3">Consonantes</span>
+        <span data-i18n="feat4">Grupos de consonantes</span>
+        <span data-i18n="feat5">Finales</span>
+        <span data-i18n="feat6">Loshn-Koydesh</span>
+        <span data-i18n="feat7">Cuadrada / Cursiva</span>
+      </div>
+      <div class="game-btns">
+        <a href="oyfnpripetshik.html" target="_blank" class="btn-game">
+          <span data-i18n="playBtn">Jugar</span>
         </a>
       </div>
     </div>
-    <div class="section-ornament">✦</div>
-  </section>
-
-  <!-- GAME SECTION -->
-  <section class="game" id="game">
-    <div class="game-inner">
-      <div class="game-text">
-        <div class="section-label" data-i18n="gameLabel">el juego</div>
-        <h2 class="game-title">Oyfn Pripetshik</h2>
-        <div class="game-desc">
-          <p data-i18n="gameDesc1">Inspirado en la <em>folk lid</em> de Mark Markovich Warshawsky, este juego para celular y escritorio es una manera entretenida de practicar el alef-beys.</p>
-          <p data-i18n="gameDesc2">Con tres niveles de dificultad y desafíos personalizables, avanzás a tu ritmo.</p>
-        </div>
-        <div class="game-features">
-          <span data-i18n="feat1">Vocales</span>
-          <span data-i18n="feat2">Diptongos</span>
-          <span data-i18n="feat3">Consonantes</span>
-          <span data-i18n="feat4">Grupos de consonantes</span>
-          <span data-i18n="feat5">Finales</span>
-          <span data-i18n="feat6">Loshn-Koydesh</span>
-          <span data-i18n="feat7">Cuadrada / Cursiva</span>
-        </div>
-        <div class="game-btns">
-          <a href="oyfnpripetshik.html" target="_blank" class="btn-game">
-            <span data-i18n="playBtn">Jugar</span>
-          </a>
-        </div>
-      </div>
-      <div class="game-visual">
-        <div class="game-photo-wrap">
-          <img src="03.jpg" alt="Oyfn Pripetshik" class="game-photo" />
-        </div>
+    <div class="game-visual">
+      <div class="game-photo-wrap">
+        <img src="03.jpg" alt="Oyfn Pripetshik" class="game-photo" />
       </div>
     </div>
-    <div class="section-ornament">✦</div>
-  </section>
+  </div>
+  <div class="section-ornament">✦</div>
+</section>
 
-  <!-- LINKS -->
-  <section class="contact" id="contact">
-    <div class="section-label" data-i18n="contactLabel">Links y contacto</div>
-    <div class="contact-body">
-      <img src="vitrola.png" alt="" class="rca-img" />
-      <div class="contact-links">
-        <a href="mailto:jeveldiscos@gmail.com" class="contact-item">
-          <span class="contact-icon">·</span>
-          <span class="contact-text">jeveldiscos@gmail.com</span>
-        </a>
-        <a href="https://instagram.com/jeveldiscos" target="_blank" class="contact-item" rel="noopener">
-          <span class="contact-icon">·</span>
-          <span class="contact-text">instagram.com/jeveldiscos</span>
-        </a>
-        <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="contact-item" rel="noopener">
-          <span class="contact-icon">·</span>
-          <span class="contact-text">jeveldiscos.bandcamp.com</span>
-        </a>
-      </div>
+<!-- LINKS -->
+<section class="contact" id="contact">
+  <div class="section-label" data-i18n="contactLabel">Links y contacto</div>
+  <div class="contact-body">
+    <img src="vitrola.png" alt="" class="rca-img" />
+    <div class="contact-links">
+      <a href="mailto:jeveldiscos@gmail.com" class="contact-item">
+        <span class="contact-icon">·</span>
+        <span class="contact-text">jeveldiscos@gmail.com</span>
+      </a>
+      <a href="https://instagram.com/jeveldiscos" target="_blank" class="contact-item" rel="noopener">
+        <span class="contact-icon">·</span>
+        <span class="contact-text">instagram.com/jeveldiscos</span>
+      </a>
+      <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="contact-item" rel="noopener">
+        <span class="contact-icon">·</span>
+        <span class="contact-text">jeveldiscos.bandcamp.com</span>
+      </a>
+      <a href="prensa.html" class="contact-item">
+        <span class="contact-icon">·</span>
+        <span class="contact-text">Prensa &amp; Blog</span>
+      </a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-logo-wrap">
-      <img src="logolapiz.png" alt="Jevel" class="footer-logo" />
-    </div>
-    <div class="footer-divider"></div>
-    <p class="footer-text">© 2026 Jevel</p>
-    <p class="footer-text">Buenos Aires, Argentina <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 900 600" style="vertical-align:middle;margin-left:4px"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg></p>
-  </footer>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo-wrap">
+    <img src="logolapiz.png" alt="Jevel" class="footer-logo" />
+  </div>
+  <div class="footer-divider"></div>
+  <p class="footer-text">© 2026 Jevel</p>
+  <p class="footer-text">Buenos Aires, Argentina <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 900 600" style="vertical-align:middle;margin-left:4px"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg></p>
+</footer>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
+<script>
+(async function loadData() {
+  try {
+    const r = await fetch('data.json?t=' + Date.now());
+    const data = await r.json();
+    const lang = localStorage.getItem('jevel-language') || 'es';
+
+    // ---- DESTACADO ----
+    const disco = (data.discos || []).find(d => d.destacado);
+    if (disco) {
+      const listenLabel = { es: 'Escuchar en Bandcamp →', en: 'Listen on Bandcamp →', pt: 'Ouvir no Bandcamp →' };
+      const listenNow   = { es: 'Escuchar ahora', en: 'Listen now', pt: 'Ouvir agora' };
+      const coverHtml = disco.cover
+        ? `<img src="${disco.cover}" alt="${disco.subtitulo || disco.titulo}" class="cover-img" onerror="this.style.display='none'"/>`
+        : `<div style="width:100%;aspect-ratio:1;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:4rem;color:var(--mid)">✦</div>`;
+
+      document.getElementById('release-inner').innerHTML = `
+        ${disco.bandcamp
+          ? `<a href="${disco.bandcamp}" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
+               <div class="cover-wrap">
+                 ${coverHtml}
+                 <div class="cover-overlay"><span data-i18n="listenBandcamp">${listenLabel[lang] || listenLabel.es}</span></div>
+               </div>
+             </a>`
+          : `<div class="cover-link"><div class="cover-wrap">${coverHtml}</div></div>`
+        }
+        <div class="release-info">
+          <h2 class="release-title">${disco.titulo || ''}</h2>
+          ${disco.subtitulo  ? `<h3 class="release-subtitle">${disco.subtitulo}</h3>` : ''}
+          ${disco.artista    ? `<p class="release-artist">${disco.artista}</p>` : ''}
+          ${disco.descripcion? `<p class="release-desc">${disco.descripcion}</p>` : ''}
+          ${disco.bandcamp
+            ? `<a href="${disco.bandcamp}" target="_blank" class="btn-bandcamp">
+                 <span data-i18n="listenNow">${listenNow[lang] || listenNow.es}</span>
+                 <span class="btn-arrow">→</span>
+               </a>`
+            : ''}
+        </div>`;
+
+      if (typeof setLanguage === 'function') setLanguage(lang);
+      if (typeof setupTilt  === 'function') setupTilt();
+    }
+
+    // ---- RECORD BOX ----
+    const recordbox = (data.discos || []).filter(d => d.recordbox);
+    const list = document.getElementById('recordbox-list');
+
+    if (!recordbox.length) {
+      list.innerHTML = '<li class="recordbox-empty">✦ &nbsp; Próximamente</li>';
+      return;
+    }
+
+    list.innerHTML = recordbox.map((d, i) => `
+      <li class="recordbox-item" style="transition-delay:${i * 0.06}s">
+        <div class="recordbox-left">
+          ${d.artista    ? `<span class="recordbox-artista">${d.artista}</span>` : ''}
+          <span class="recordbox-titulo">${d.titulo || ''}${d.subtitulo ? ` <span class="recordbox-subtitulo">${d.subtitulo}</span>` : ''}</span>
+        </div>
+        <div class="recordbox-right">
+          ${d.año ? `<span class="recordbox-año">${d.año}</span>` : ''}
+          ${d.bandcamp
+            ? `<a class="recordbox-link" href="${d.bandcamp}" target="_blank" rel="noopener">Bandcamp →</a>`
+            : ''}
+        </div>
+      </li>`).join('');
+
+    // Reveal on scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.05 });
+    list.querySelectorAll('.recordbox-item').forEach(el => observer.observe(el));
+
+  } catch(e) {
+    console.warn('No se pudo cargar data.json, usando fallback.');
+    document.getElementById('recordbox-list').innerHTML = '';
+  }
+})();
+</script>
+
 </body>
 </html>
