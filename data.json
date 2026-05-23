@@ -9,7 +9,7 @@
       "descripcion": "Prueba descripción",
       "bandcamp": "https://wormsheriff.bandcamp.com/album/everyone-is-a-light",
       "cover": "Mateshpil-cover.jpg",
-      "destacado": false,
+      "destacado": true,
       "recordbox": true
     },
     {
@@ -21,7 +21,7 @@
       "descripcion": "Una sesión klezmer en Buenos Aires, 2024.",
       "bandcamp": "https://jeveldiscos.bandcamp.com",
       "cover": "Mateshpil-cover.jpg",
-      "destacado": true,
+      "destacado": false,
       "recordbox": true
     }
   ],
