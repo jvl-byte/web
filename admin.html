@@ -386,6 +386,12 @@ textarea { resize: vertical; min-height: 100px; }
             <label class="field-label">Nombre del archivo cover (en el repo)</label>
             <input type="text" id="d-cover" placeholder="cover-disco.jpg"/>
           </div>
+          <div class="form-group full">
+            <label class="field-label">Reseña vinculada</label>
+            <select id="d-reseña">
+              <option value="">— Sin reseña —</option>
+            </select>
+          </div>
           <div class="form-group" style="flex-direction:row;align-items:center;gap:0.8rem;padding:0.9rem;border:1.5px solid var(--ink);background:var(--paper-dark)">
             <input type="checkbox" id="d-destacado" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--ink);cursor:pointer"/>
             <div>
@@ -597,7 +603,19 @@ function setTab(tab) {
 function toggleForm(id) {
   const panel = document.getElementById(id);
   panel.classList.toggle('open');
+  if (panel.classList.contains('open') && id === 'disco-form') populateReseñaSelect();
   if (!panel.classList.contains('open')) resetForm();
+}
+
+function populateReseñaSelect(selectedId = '') {
+  const sel = document.getElementById('d-reseña');
+  if (!sel) return;
+  const reseñas = DATA.reseñas || [];
+  sel.innerHTML = '<option value="">— Sin reseña —</option>' +
+    reseñas.map(r => {
+      const label = [r.medio, r.autor, r.disco ? `re: ${r.disco}` : ''].filter(Boolean).join(' · ');
+      return `<option value="${r.id}" ${r.id === selectedId ? 'selected' : ''}>${label}</option>`;
+    }).join('');
 }
 
 function resetForm() {
@@ -607,6 +625,8 @@ function resetForm() {
   if (dest) dest.checked = false;
   const recbox = document.getElementById('d-recordbox');
   if (recbox) recbox.checked = false;
+  const resSel = document.getElementById('d-reseña');
+  if (resSel) resSel.value = '';
   ['d-titulo','d-subtitulo','d-artista','d-año','d-descripcion','d-bandcamp','d-cover',
    'r-medio','r-autor','r-disco','r-fecha','r-extracto','r-url',
    'b-titulo','b-fecha','b-contenido'].forEach(id => {
@@ -636,6 +656,7 @@ async function saveItem(type) {
       cover: document.getElementById('d-cover').value.trim(),
       destacado: document.getElementById('d-destacado').checked,
       recordbox: document.getElementById('d-recordbox').checked,
+      reseñaId: document.getElementById('d-reseña').value || '',
     };
     if (!item.titulo || !item.artista) { showStatus('Título y artista son obligatorios', 'err'); return; }
     list = 'discos'; formId = 'disco-form'; msg = `Admin: ${editingId ? 'editar' : 'agregar'} disco ${item.subtitulo || item.titulo}`;
@@ -705,6 +726,7 @@ function editItem(type, id) {
     document.getElementById('d-cover').value = item.cover || '';
     document.getElementById('d-destacado').checked = item.destacado || false;
     document.getElementById('d-recordbox').checked = item.recordbox || false;
+    populateReseñaSelect(item.reseñaId || '');
     document.getElementById('disco-form').classList.add('open');
     setTab('discos');
   }
@@ -769,7 +791,8 @@ function renderList(type) {
     if (type === 'discos') {
       title = `${item.titulo || ''} ${item.subtitulo ? `<small style="font-family:var(--font-mono);font-size:0.7em;color:var(--mid)">${item.subtitulo}</small>` : ''}${item.destacado ? ' <small style="font-family:var(--font-mono);font-size:0.65em;background:var(--ink);color:var(--paper);padding:0.1em 0.5em;letter-spacing:0.1em">★ INICIO</small>' : ''}${item.recordbox ? ' <small style="font-family:var(--font-mono);font-size:0.65em;border:1px solid var(--ink);padding:0.1em 0.5em;letter-spacing:0.1em">□ RECORD BOX</small>' : ''}`;
       meta = [item.artista, item.año].filter(Boolean).join(' · ');
-      desc = item.descripcion || '';
+      const resVinculada = item.reseñaId ? DATA.reseñas.find(r => r.id === item.reseñaId) : null;
+      desc = (item.descripcion || '') + (resVinculada ? ` <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mid);display:inline-block;margin-top:0.3rem">✦ Reseña: ${resVinculada.medio}${resVinculada.autor ? ' · ' + resVinculada.autor : ''}</span>` : '');
     }
     if (type === 'reseñas') {
       title = item.medio || '';
