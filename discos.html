@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Discos · Jevel</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.page-header {
+  padding: 6rem 2rem 4rem;
+  border-bottom: 2px solid var(--ink);
+  text-align: center;
+  position: relative;
+}
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg,var(--ink) 0px,var(--ink) 8px,transparent 8px,transparent 16px);
+}
+.back-link {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--mid);
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--ink); }
+.page-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 1rem;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem,6vw,4rem);
+  line-height: 1;
+}
+
+.discos-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 3rem;
+}
+
+.disco-card {
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.disco-card.visible { opacity: 1; transform: translateY(0); }
+
+.disco-cover-wrap {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.disco-cover-wrap:hover {
+  transform: translate(-3px,-3px);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+.disco-cover-img {
+  width: 100%;
+  display: block;
+  filter: contrast(1.05) saturate(0.9);
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.disco-cover-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--paper-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--mid);
+}
+.disco-cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26,18,9,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--paper);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+.disco-cover-wrap:hover .disco-cover-overlay { opacity: 1; }
+
+.disco-info {}
+.disco-titulo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.1;
+  margin-bottom: 0.15rem;
+}
+.disco-subtitulo {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  color: var(--mid);
+  margin-bottom: 0.5rem;
+}
+.disco-artista {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+.disco-año {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mid);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.8rem;
+}
+.disco-desc {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--mid);
+  margin-bottom: 1.2rem;
+}
+.disco-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  border: 2px solid var(--ink);
+  padding: 0.55rem 1.2rem;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  align-self: flex-start;
+}
+.disco-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+.empty-msg {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 6rem 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--mid);
+  letter-spacing: 0.05em;
+}
+</style>
+</head>
+<body>
+<div class="lang-switcher">
+  <a href="index.html" class="lang-btn">← Inicio</a>
+</div>
+
+<div class="page-header">
+  <div class="page-label">Jevel Discos</div>
+  <h1 class="page-title">Discografía</h1>
+</div>
+
+<div class="discos-grid" id="discos-grid">
+  <div class="empty-msg">Cargando...</div>
+</div>
+
+<footer class="footer">
+  <div class="footer-divider"></div>
+  <p class="footer-text">© 2026 Jevel · Buenos Aires</p>
+</footer>
+
+<script>
+async function loadDiscos() {
+  try {
+    const r = await fetch(`data.json?t=${Date.now()}`);
+    const data = await r.json();
+    renderDiscos(data.discos || []);
+  } catch(e) {
+    document.getElementById('discos-grid').innerHTML = '<div class="empty-msg">Error al cargar discos.</div>';
+  }
+}
+
+function renderDiscos(discos) {
+  const grid = document.getElementById('discos-grid');
+  if (!discos.length) {
+    grid.innerHTML = '<div class="empty-msg">✦ &nbsp; Próximamente</div>';
+    return;
+  }
+  grid.innerHTML = discos.map((d, i) => {
+    const imgEl = d.cover
+      ? `<img src="${d.cover}" alt="${d.subtitulo || d.titulo}" class="disco-cover-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="disco-cover-placeholder" style="display:none">✦</div>`
+      : `<div class="disco-cover-placeholder">✦</div>`;
+    const link = d.bandcamp ? `href="${d.bandcamp}" target="_blank" rel="noopener"` : '';
+    return `
+    <div class="disco-card" style="transition-delay:${i*0.1}s">
+      <div class="disco-cover-wrap">
+        ${imgEl}
+        ${d.bandcamp ? `<a class="disco-cover-overlay" ${link}>Escuchar en Bandcamp →</a>` : ''}
+      </div>
+      <div class="disco-info">
+        <div class="disco-titulo">${d.titulo || ''}</div>
+        ${d.subtitulo ? `<div class="disco-subtitulo">${d.subtitulo}</div>` : ''}
+        ${d.artista ? `<div class="disco-artista">${d.artista}</div>` : ''}
+        ${d.año ? `<div class="disco-año">${d.año}</div>` : ''}
+        ${d.descripcion ? `<div class="disco-desc">${d.descripcion}</div>` : ''}
+        ${d.bandcamp ? `<a class="disco-btn" ${link}>Escuchar <span>→</span></a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.disco-card').forEach(c => observer.observe(c));
+}
+
+loadDiscos();
+</script>
+</body>
+</html>

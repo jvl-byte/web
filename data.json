@@ -1,0 +1,18 @@
+{
+  "discos": [
+    {
+      "id": "mateshpil",
+      "titulo": "מאַטעשפּיל",
+      "subtitulo": "Mateshpil",
+      "artista": "Julián Brenlle & Klezmer Três Rios",
+      "año": "2024",
+      "descripcion": "Una sesión klezmer en Buenos Aires, 2024.",
+      "bandcamp": "https://jeveldiscos.bandcamp.com",
+      "cover": "Mateshpil-cover.jpg",
+      "destacado": true,
+      "recordbox": true
+    }
+  ],
+  "reseñas": [],
+  "blogs": []
+}

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Prensa & Blog · Jevel</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.page-header {
+  padding: 6rem 2rem 4rem;
+  border-bottom: 2px solid var(--ink);
+  text-align: center;
+  position: relative;
+}
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg,var(--ink) 0px,var(--ink) 8px,transparent 8px,transparent 16px);
+}
+.page-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 1rem;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem,6vw,4rem);
+  line-height: 1;
+}
+
+/* TABS */
+.page-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--ink);
+  max-width: 820px;
+  margin: 3rem auto 0;
+}
+.page-tab {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.9rem 2rem;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--ink);
+  cursor: pointer;
+  color: var(--mid);
+  transition: all 0.15s;
+}
+.page-tab:hover { color: var(--ink); background: var(--paper-dark); }
+.page-tab.active { color: var(--ink); font-weight: 700; background: var(--paper); }
+
+/* CONTENT AREA */
+.page-content {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+}
+
+/* RESEÑAS */
+.reseña-card {
+  border-left: 3px solid var(--ink);
+  padding: 1.8rem 2rem;
+  margin-bottom: 2.5rem;
+  background: var(--paper);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.6s, transform 0.6s, border-color 0.2s;
+}
+.reseña-card.visible { opacity: 1; transform: translateX(0); }
+.reseña-card:hover { border-color: var(--accent); }
+
+.reseña-extracto {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(1.05rem,2.5vw,1.25rem);
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  color: var(--ink);
+}
+.reseña-extracto::before { content: '«'; margin-right: 0.1em; }
+.reseña-extracto::after  { content: '»'; margin-left: 0.1em; }
+
+.reseña-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.reseña-medio {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+.reseña-info {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--mid);
+  letter-spacing: 0.05em;
+}
+.reseña-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  border-bottom: 1px solid var(--mid);
+  transition: color 0.2s, border-color 0.2s;
+  margin-left: auto;
+}
+.reseña-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* BLOG */
+.blog-card {
+  border: 1.5px solid var(--ink);
+  padding: 2.2rem;
+  margin-bottom: 2rem;
+  background: var(--paper);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s, transform 0.6s, box-shadow 0.2s;
+}
+.blog-card.visible { opacity: 1; transform: translateY(0); }
+.blog-card:hover { box-shadow: 4px 4px 0 var(--ink); }
+
+.blog-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.blog-titulo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+.blog-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--mid);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.blog-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--mid);
+  margin: 1rem 0;
+}
+.blog-contenido {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.blog-contenido p { margin-bottom: 1em; }
+
+/* Expandir/contraer */
+.blog-preview { display: block; }
+.blog-full { display: none; }
+.blog-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  color: var(--mid);
+  cursor: pointer;
+  padding: 0;
+  margin-top: 1rem;
+  border-bottom: 1px solid var(--mid);
+  transition: color 0.2s;
+}
+.blog-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
+.empty-msg {
+  text-align: center;
+  padding: 5rem 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--mid);
+  letter-spacing: 0.05em;
+}
+</style>
+</head>
+<body>
+<div class="lang-switcher">
+  <a href="index.html" class="lang-btn">← Inicio</a>
+</div>
+
+<div class="page-header">
+  <div class="page-label">Jevel</div>
+  <h1 class="page-title">Prensa & Blog</h1>
+</div>
+
+<div class="page-tabs">
+  <button class="page-tab active" onclick="showSection('reseñas', this)">Reseñas</button>
+  <button class="page-tab" onclick="showSection('blogs', this)">Blog</button>
+</div>
+
+<div class="page-content">
+  <div id="section-reseñas">
+    <div id="list-reseñas"><div class="empty-msg">Cargando...</div></div>
+  </div>
+  <div id="section-blogs" style="display:none">
+    <div id="list-blogs"><div class="empty-msg">Cargando...</div></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-divider"></div>
+  <p class="footer-text">© 2026 Jevel · Buenos Aires</p>
+</footer>
+
+<script>
+function showSection(name, btn) {
+  document.getElementById('section-reseñas').style.display = name === 'reseñas' ? 'block' : 'none';
+  document.getElementById('section-blogs').style.display = name === 'blogs' ? 'block' : 'none';
+  document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  revealCards();
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(`data.json?t=${Date.now()}`);
+    const data = await r.json();
+    renderReseñas(data.reseñas || []);
+    renderBlogs(data.blogs || []);
+    revealCards();
+  } catch(e) {
+    document.getElementById('list-reseñas').innerHTML = '<div class="empty-msg">Error al cargar.</div>';
+    document.getElementById('list-blogs').innerHTML = '<div class="empty-msg">Error al cargar.</div>';
+  }
+}
+
+function renderReseñas(items) {
+  const container = document.getElementById('list-reseñas');
+  if (!items.length) {
+    container.innerHTML = '<div class="empty-msg">✦ &nbsp; Sin reseñas aún</div>';
+    return;
+  }
+  container.innerHTML = items.map((r, i) => `
+    <div class="reseña-card" style="transition-delay:${i*0.08}s">
+      <div class="reseña-extracto">${r.extracto || ''}</div>
+      <div class="reseña-meta">
+        <span class="reseña-medio">${r.medio || ''}</span>
+        <span class="reseña-info">${[r.autor, r.fecha, r.disco ? `re: ${r.disco}` : ''].filter(Boolean).join(' · ')}</span>
+        ${r.url ? `<a class="reseña-link" href="${r.url}" target="_blank" rel="noopener">Leer →</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBlogs(items) {
+  const container = document.getElementById('list-blogs');
+  if (!items.length) {
+    container.innerHTML = '<div class="empty-msg">✦ &nbsp; Sin entradas aún</div>';
+    return;
+  }
+  container.innerHTML = items.map((b, i) => {
+    const texto = b.contenido || '';
+    const largo = texto.length > 400;
+    const preview = largo ? texto.slice(0, 400) + '…' : texto;
+    const catLabel = { nota: 'Nota', cronica: 'Crónica', entrevista: 'Entrevista', editorial: 'Editorial' }[b.categoria] || b.categoria;
+    return `
+    <div class="blog-card" style="transition-delay:${i*0.08}s">
+      <div class="blog-header">
+        <div class="blog-titulo">${b.titulo || ''}</div>
+        <div class="blog-meta">${[catLabel, b.fecha].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="blog-divider"></div>
+      <div class="blog-contenido">
+        <div class="blog-preview">${preview}</div>
+        ${largo ? `<div class="blog-full">${texto}</div>
+        <button class="blog-toggle" onclick="toggleBlog(this)">Leer más →</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleBlog(btn) {
+  const card = btn.closest('.blog-card');
+  const preview = card.querySelector('.blog-preview');
+  const full = card.querySelector('.blog-full');
+  const expanded = full.style.display === 'block';
+  preview.style.display = expanded ? 'block' : 'none';
+  full.style.display = expanded ? 'none' : 'block';
+  btn.textContent = expanded ? 'Leer más →' : 'Leer menos ↑';
+}
+
+function revealCards() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.05 });
+  document.querySelectorAll('.reseña-card, .blog-card').forEach(c => observer.observe(c));
+}
+
+loadData();
+</script>
+</body>
+</html>
