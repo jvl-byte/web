@@ -23,6 +23,13 @@ const translations = {
     feat7: "Cuadrada / Cursiva",
     playBtn: "Jugar",
     contactLabel: "Links y contacto",
+    catalogLabel: "catálogo",
+    recordboxLoading: "Cargando...",
+    recordboxEmpty: "✦ &nbsp; Próximamente",
+    reviewLink: "Reseña →",
+    pressAndBlog: "Prensa & Blog",
+    footerLocation: "Buenos Aires, Argentina",
+    reviewPrefix: "✦ Reseña:",
   },
   en: {
     tagline: "Jevel is an independent Yiddish and klezmer music label.",
@@ -42,6 +49,13 @@ const translations = {
     feat7: "Square / Cursive",
     playBtn: "Play",
     contactLabel: "Links & contact",
+    catalogLabel: "catalogue",
+    recordboxLoading: "Loading...",
+    recordboxEmpty: "✦ &nbsp; Coming soon",
+    reviewLink: "Review →",
+    pressAndBlog: "Press & Blog",
+    footerLocation: "Buenos Aires, Argentina",
+    reviewPrefix: "✦ Review:",
   },
   pt: {
     tagline: "Jevel é um selo independente de música ídiche e klezmer.",
@@ -61,6 +75,13 @@ const translations = {
     feat7: "Quadrada / Cursiva",
     playBtn: "Jogar",
     contactLabel: "Links e contato",
+    catalogLabel: "catálogo",
+    recordboxLoading: "Carregando...",
+    recordboxEmpty: "✦ &nbsp; Em breve",
+    reviewLink: "Resenha →",
+    pressAndBlog: "Imprensa & Blog",
+    footerLocation: "Buenos Aires, Argentina",
+    reviewPrefix: "✦ Resenha:",
   }
 };
 
@@ -69,6 +90,7 @@ function setLanguage(lang) {
   console.log('Setting language to:', lang);
   
   const t = translations[lang];
+  window._jevelT = t;
   
   if (!t) {
     console.error('Language not found:', lang);
