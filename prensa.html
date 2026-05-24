@@ -276,7 +276,7 @@ function renderBlogs(items) {
     const preview = largo ? texto.slice(0, 400) + '…' : texto;
     const catLabel = { nota: 'Nota', cronica: 'Crónica', entrevista: 'Entrevista', editorial: 'Editorial' }[b.categoria] || b.categoria;
     return `
-    <div class="blog-card" style="transition-delay:${i*0.08}s">
+    <div class="blog-card" id="${b.id}" style="transition-delay:${i*0.08}s">
       <div class="blog-header">
         <div class="blog-titulo">${b.titulo || ''}</div>
         <div class="blog-meta">${[catLabel, b.fecha].filter(Boolean).join(' · ')}</div>
@@ -309,6 +309,18 @@ function revealCards() {
 }
 
 loadData();
+
+// Si la URL tiene un hash, abrir la sección blog y hacer scroll al elemento
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash) {
+    const btn = document.querySelector('.page-tab:nth-child(2)');
+    showSection('blogs', btn);
+    setTimeout(() => {
+      const el = document.querySelector(window.location.hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 400);
+  }
+});
 </script>
 </body>
 </html>
