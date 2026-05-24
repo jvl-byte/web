@@ -49,8 +49,8 @@
 .recordbox-item.visible { opacity: 1; transform: translateY(0); }
 
 .recordbox-cover {
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   flex-shrink: 0;
   overflow: hidden;
   border-right: 1px solid rgba(26,18,9,0.12);
@@ -60,8 +60,8 @@
   background: var(--paper-dark);
 }
 .recordbox-cover img {
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   object-fit: cover;
   display: block;
   filter: contrast(1.05) saturate(0.9);
@@ -142,9 +142,32 @@
 }
 
 @media (max-width: 600px) {
-  .recordbox-cover-placeholder { width: 48px; }
-  .recordbox-left { padding: 0.8rem; }
-  .recordbox-right { padding: 0.8rem 0.8rem 0.8rem 0; gap: 0.6rem; }
+  .recordbox {
+    padding: 3rem 0;
+  }
+  .recordbox-item {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .recordbox-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-right: none;
+    border-bottom: 1px solid rgba(26,18,9,0.12);
+  }
+  .recordbox-cover img {
+    width: 100%;
+    height: 100%;
+  }
+  .recordbox-left {
+    padding: 1rem 1.2rem 0.5rem;
+  }
+  .recordbox-right {
+    padding: 0.5rem 1.2rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
   .recordbox-año { display: none; }
 }
 </style>
@@ -208,9 +231,9 @@
 
 <!-- RECORD BOX -->
 <section class="recordbox" id="recordbox">
-  <div class="section-label">catálogo</div>
+  <div class="section-label" data-i18n="catalogLabel">catálogo</div>
   <ul class="recordbox-list" id="recordbox-list">
-    <li class="recordbox-empty">Cargando...</li>
+    <li class="recordbox-empty" data-i18n="recordboxLoading">Cargando...</li>
   </ul>
   <div class="section-ornament">✦</div>
 </section>
@@ -269,7 +292,7 @@
       </a>
       <a href="prensa.html" class="contact-item">
         <span class="contact-icon">·</span>
-        <span class="contact-text">Prensa &amp; Blog</span>
+        <span class="contact-text" data-i18n="pressAndBlog">Prensa &amp; Blog</span>
       </a>
     </div>
   </div>
@@ -282,7 +305,7 @@
   </div>
   <div class="footer-divider"></div>
   <p class="footer-text">© 2026 Jevel</p>
-  <p class="footer-text">Buenos Aires, Argentina <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 900 600" style="vertical-align:middle;margin-left:4px"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg></p>
+  <p class="footer-text"><span data-i18n="footerLocation">Buenos Aires, Argentina</span> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 900 600" style="vertical-align:middle;margin-left:4px"><rect width="900" height="200" y="0" fill="#74acdf"/><rect width="900" height="200" y="200" fill="#fff"/><rect width="900" height="200" y="400" fill="#74acdf"/><circle cx="450" cy="300" r="60" fill="#f6b40e" stroke="#85340a" stroke-width="4"/></svg></p>
 </footer>
 
 <script src="script.js"></script>
@@ -292,18 +315,18 @@
     const r = await fetch('data.json?t=' + Date.now());
     const data = await r.json();
     const lang = localStorage.getItem('jevel-language') || 'es';
+    const t = (key) => (window._jevelT && window._jevelT[key]) || key;
 
-    // Helper: obtener reseña vinculada a un disco
+    // Helper: obtener entrada de blog vinculada a un disco
     const getReseña = (disco) => disco.reseñaId
-      ? (data.reseñas || []).find(r => r.id === disco.reseñaId)
+      ? (data.blogs || []).find(b => b.id === disco.reseñaId)
       : null;
 
     // ---- DESTACADO ----
     const disco = (data.discos || []).find(d => d.destacado);
     if (disco) {
       const listenLabel = { es: 'Escuchar en Bandcamp →', en: 'Listen on Bandcamp →', pt: 'Ouvir no Bandcamp →' };
-      const listenNow   = { es: 'Escuchar ahora', en: 'Listen now', pt: 'Ouvir agora' };
-      const coverHtml = disco.cover
+      const listenNow   = { es: 'Escuchar ahora', en: 'Listen now', pt: 'Ouvir agora' };      const coverHtml = disco.cover
         ? `<img src="${disco.cover}" alt="${disco.subtitulo || disco.titulo}" class="cover-img" onerror="this.style.display='none'"/>`
         : `<div style="width:100%;aspect-ratio:1;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:4rem;color:var(--mid)">✦</div>`;
 
@@ -328,7 +351,7 @@
                  <span class="btn-arrow">→</span>
                </a>`
             : ''}
-          ${(() => { const res = getReseña(disco); return res && res.url ? `<a href="${res.url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;border-bottom:1px solid var(--mid);margin-top:0.8rem;transition:color 0.15s,border-color 0.15s" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--mid)';this.style.borderColor='var(--mid)'">✦ Reseña: ${res.medio}</a>` : ''; })()}
+          ${(() => { const res = getReseña(disco); return res ? `<a href="prensa.html#${res.id}" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;border-bottom:1px solid var(--mid);margin-top:0.8rem;transition:color 0.15s,border-color 0.15s" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--mid)';this.style.borderColor='var(--mid)'">${t('reviewPrefix')} ${res.titulo}</a>` : ''; })()}
         </div>`;
 
       if (typeof setLanguage === 'function') setLanguage(lang);
@@ -340,7 +363,7 @@
     const list = document.getElementById('recordbox-list');
 
     if (!recordbox.length) {
-      list.innerHTML = '<li class="recordbox-empty">✦ &nbsp; Próximamente</li>';
+      list.innerHTML = `<li class="recordbox-empty">${t('recordboxEmpty')}</li>`;
       return;
     }
 
@@ -357,7 +380,7 @@
         </div>
         <div class="recordbox-right">
           ${d.año ? `<span class="recordbox-año">${d.año}</span>` : ''}
-          ${(() => { const res = getReseña(d); return res && res.url ? `<a class="recordbox-link" href="${res.url}" target="_blank" rel="noopener">Reseña →</a>` : ''; })()}
+          ${(() => { const res = getReseña(d); return res ? `<a class="recordbox-link" href="prensa.html#${res.id}" rel="noopener">${t('reviewLink')}</a>` : ''; })()}
           ${d.bandcamp
             ? `<a class="recordbox-link" href="${d.bandcamp}" target="_blank" rel="noopener">Bandcamp →</a>`
             : ''}
