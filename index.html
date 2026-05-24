@@ -143,32 +143,43 @@
 
 @media (max-width: 600px) {
   .recordbox {
-    padding: 3rem 0;
+    padding: 3rem 1rem;
   }
   .recordbox-item {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-columns: 80px 1fr auto;
+    grid-template-rows: auto;
   }
   .recordbox-cover {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    border-right: none;
-    border-bottom: 1px solid rgba(26,18,9,0.12);
+    width: 80px;
+    height: 80px;
+    border-right: 1px solid rgba(26,18,9,0.12);
+    border-bottom: none;
   }
   .recordbox-cover img {
-    width: 100%;
-    height: 100%;
+    width: 80px;
+    height: 80px;
   }
   .recordbox-left {
-    padding: 1rem 1.2rem 0.5rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .recordbox-artista {
+    font-size: 0.7rem;
+  }
+  .recordbox-titulo {
+    font-size: 0.95rem;
   }
   .recordbox-right {
-    padding: 0.5rem 1.2rem 1rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    padding: 0.6rem 0.6rem 0.6rem 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    justify-content: center;
   }
   .recordbox-año { display: none; }
+  .recordbox-link {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
 }
 </style>
 </head>
