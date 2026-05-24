@@ -340,7 +340,6 @@ textarea { resize: vertical; min-height: 100px; }
 
   <div class="tabs">
     <button class="tab-btn active" onclick="setTab('discos')">Discos</button>
-    <button class="tab-btn" onclick="setTab('reseñas')">Reseñas</button>
     <button class="tab-btn" onclick="setTab('blogs')">Blog</button>
   </div>
 
@@ -387,9 +386,9 @@ textarea { resize: vertical; min-height: 100px; }
             <input type="text" id="d-cover" placeholder="cover-disco.jpg"/>
           </div>
           <div class="form-group full">
-            <label class="field-label">Reseña vinculada</label>
+            <label class="field-label">Entrada de blog vinculada</label>
             <select id="d-reseña">
-              <option value="">— Sin reseña —</option>
+              <option value="">— Sin entrada —</option>
             </select>
           </div>
           <div class="form-group" style="flex-direction:row;align-items:center;gap:0.8rem;padding:0.9rem;border:1.5px solid var(--ink);background:var(--paper-dark)">
@@ -413,51 +412,6 @@ textarea { resize: vertical; min-height: 100px; }
         </div>
       </div>
       <div class="cards" id="list-discos"></div>
-    </div>
-
-    <!-- RESEÑAS -->
-    <div id="tab-reseñas" style="display:none">
-      <div class="section-head">
-        <div class="section-title">Reseñas</div>
-        <div style="display:flex;gap:0.8rem;align-items:center">
-          <span class="count-badge" id="count-reseñas">0 reseñas</span>
-          <button class="btn btn-sm" onclick="toggleForm('reseña-form')">+ Agregar</button>
-        </div>
-      </div>
-      <div class="form-panel" id="reseña-form">
-        <div class="form-title" id="reseña-form-title">Nueva reseña</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="field-label">Medio / Publicación</label>
-            <input type="text" id="r-medio" placeholder="Clarín, Rolling Stone AR..."/>
-          </div>
-          <div class="form-group">
-            <label class="field-label">Autor</label>
-            <input type="text" id="r-autor" placeholder="Nombre Apellido"/>
-          </div>
-          <div class="form-group">
-            <label class="field-label">Disco reseñado</label>
-            <input type="text" id="r-disco" placeholder="Mateshpil"/>
-          </div>
-          <div class="form-group">
-            <label class="field-label">Fecha (mes/año)</label>
-            <input type="text" id="r-fecha" placeholder="Enero 2025"/>
-          </div>
-          <div class="form-group full">
-            <label class="field-label">Extracto / cita principal</label>
-            <textarea id="r-extracto" placeholder="«...»"></textarea>
-          </div>
-          <div class="form-group full">
-            <label class="field-label">URL de la reseña original</label>
-            <input type="url" id="r-url" placeholder="https://..."/>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-sm" onclick="saveItem('reseña')">Guardar</button>
-          <button class="btn btn-sm btn-secondary" onclick="toggleForm('reseña-form')">Cancelar</button>
-        </div>
-      </div>
-      <div class="cards" id="list-reseñas"></div>
     </div>
 
     <!-- BLOG -->
@@ -591,10 +545,10 @@ async function saveData(msg) {
 
 // ---- TABS ----
 function setTab(tab) {
-  ['discos','reseñas','blogs'].forEach(t => {
+  ['discos','blogs'].forEach(t => {
     document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
     document.querySelectorAll('.tab-btn').forEach((b,i) => {
-      b.classList.toggle('active', ['discos','reseñas','blogs'][i] === tab);
+      b.classList.toggle('active', ['discos','blogs'][i] === tab);
     });
   });
 }
@@ -610,11 +564,11 @@ function toggleForm(id) {
 function populateReseñaSelect(selectedId = '') {
   const sel = document.getElementById('d-reseña');
   if (!sel) return;
-  const reseñas = DATA.reseñas || [];
-  sel.innerHTML = '<option value="">— Sin reseña —</option>' +
-    reseñas.map(r => {
-      const label = [r.medio, r.autor, r.disco ? `re: ${r.disco}` : ''].filter(Boolean).join(' · ');
-      return `<option value="${r.id}" ${r.id === selectedId ? 'selected' : ''}>${label}</option>`;
+  const blogs = DATA.blogs || [];
+  sel.innerHTML = '<option value="">— Sin entrada —</option>' +
+    blogs.map(b => {
+      const label = [b.titulo, b.fecha].filter(Boolean).join(' · ');
+      return `<option value="${b.id}" ${b.id === selectedId ? 'selected' : ''}>${label}</option>`;
     }).join('');
 }
 
@@ -628,7 +582,6 @@ function resetForm() {
   const resSel = document.getElementById('d-reseña');
   if (resSel) resSel.value = '';
   ['d-titulo','d-subtitulo','d-artista','d-año','d-descripcion','d-bandcamp','d-cover',
-   'r-medio','r-autor','r-disco','r-fecha','r-extracto','r-url',
    'b-titulo','b-fecha','b-contenido'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
@@ -636,7 +589,6 @@ function resetForm() {
   const sel = document.getElementById('b-categoria');
   if (sel) sel.value = 'nota';
   document.getElementById('disco-form-title').textContent = 'Nuevo disco';
-  document.getElementById('reseña-form-title').textContent = 'Nueva reseña';
   document.getElementById('blog-form-title').textContent = 'Nueva entrada';
 }
 
@@ -662,20 +614,6 @@ async function saveItem(type) {
     list = 'discos'; formId = 'disco-form'; msg = `Admin: ${editingId ? 'editar' : 'agregar'} disco ${item.subtitulo || item.titulo}`;
     // Solo un disco destacado a la vez
     if (item.destacado) DATA.discos.forEach(d => { if (d.id !== item.id) d.destacado = false; });
-  }
-
-  if (type === 'reseña') {
-    item = {
-      id: editingId || Date.now().toString(),
-      medio: document.getElementById('r-medio').value.trim(),
-      autor: document.getElementById('r-autor').value.trim(),
-      disco: document.getElementById('r-disco').value.trim(),
-      fecha: document.getElementById('r-fecha').value.trim(),
-      extracto: document.getElementById('r-extracto').value.trim(),
-      url: document.getElementById('r-url').value.trim(),
-    };
-    if (!item.medio || !item.extracto) { showStatus('Medio y extracto son obligatorios', 'err'); return; }
-    list = 'reseñas'; formId = 'reseña-form'; msg = `Admin: ${editingId ? 'editar' : 'agregar'} reseña ${item.medio}`;
   }
 
   if (type === 'blog') {
@@ -730,17 +668,6 @@ function editItem(type, id) {
     document.getElementById('disco-form').classList.add('open');
     setTab('discos');
   }
-  if (type === 'reseñas') {
-    document.getElementById('reseña-form-title').textContent = 'Editar reseña';
-    document.getElementById('r-medio').value = item.medio || '';
-    document.getElementById('r-autor').value = item.autor || '';
-    document.getElementById('r-disco').value = item.disco || '';
-    document.getElementById('r-fecha').value = item.fecha || '';
-    document.getElementById('r-extracto').value = item.extracto || '';
-    document.getElementById('r-url').value = item.url || '';
-    document.getElementById('reseña-form').classList.add('open');
-    setTab('reseñas');
-  }
   if (type === 'blogs') {
     document.getElementById('blog-form-title').textContent = 'Editar entrada';
     document.getElementById('b-titulo').value = item.titulo || '';
@@ -768,7 +695,6 @@ async function deleteItem(type, id) {
 // ---- RENDER ----
 function renderAll() {
   renderList('discos');
-  renderList('reseñas');
   renderList('blogs');
 }
 
@@ -777,7 +703,6 @@ function renderList(type) {
   const items = DATA[type] || [];
 
   const labels = { discos: `${items.length} disco${items.length !== 1 ? 's' : ''}`,
-                   reseñas: `${items.length} reseña${items.length !== 1 ? 's' : ''}`,
                    blogs: `${items.length} entrada${items.length !== 1 ? 's' : ''}` };
   document.getElementById(`count-${type}`).textContent = labels[type];
 
@@ -791,13 +716,8 @@ function renderList(type) {
     if (type === 'discos') {
       title = `${item.titulo || ''} ${item.subtitulo ? `<small style="font-family:var(--font-mono);font-size:0.7em;color:var(--mid)">${item.subtitulo}</small>` : ''}${item.destacado ? ' <small style="font-family:var(--font-mono);font-size:0.65em;background:var(--ink);color:var(--paper);padding:0.1em 0.5em;letter-spacing:0.1em">★ INICIO</small>' : ''}${item.recordbox ? ' <small style="font-family:var(--font-mono);font-size:0.65em;border:1px solid var(--ink);padding:0.1em 0.5em;letter-spacing:0.1em">□ RECORD BOX</small>' : ''}`;
       meta = [item.artista, item.año].filter(Boolean).join(' · ');
-      const resVinculada = item.reseñaId ? DATA.reseñas.find(r => r.id === item.reseñaId) : null;
-      desc = (item.descripcion || '') + (resVinculada ? ` <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mid);display:inline-block;margin-top:0.3rem">✦ Reseña: ${resVinculada.medio}${resVinculada.autor ? ' · ' + resVinculada.autor : ''}</span>` : '');
-    }
-    if (type === 'reseñas') {
-      title = item.medio || '';
-      meta = [item.autor, item.fecha, item.disco ? `re: ${item.disco}` : ''].filter(Boolean).join(' · ');
-      desc = item.extracto ? `«${item.extracto.slice(0, 120)}${item.extracto.length > 120 ? '…' : ''}»` : '';
+      const blogVinculado = item.reseñaId ? (DATA.blogs || []).find(b => b.id === item.reseñaId) : null;
+      desc = (item.descripcion || '') + (blogVinculado ? ` <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mid);display:inline-block;margin-top:0.3rem">✦ Blog: ${blogVinculado.titulo}</span>` : '');
     }
     if (type === 'blogs') {
       title = item.titulo || '';
