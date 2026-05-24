@@ -10,7 +10,8 @@
       "bandcamp": "https://wormsheriff.bandcamp.com/album/everyone-is-a-light",
       "cover": "Mateshpil-cover.jpg",
       "destacado": false,
-      "recordbox": true
+      "recordbox": false,
+      "reseñaId": ""
     },
     {
       "id": "mateshpil",
