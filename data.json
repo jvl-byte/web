@@ -1,6 +1,19 @@
 {
   "discos": [
     {
+      "id": "1783992912252",
+      "titulo": "Parke Sessions Vol.1 - Pascal Demalsy",
+      "subtitulo": "",
+      "artista": "Alex Parke feat. Pascal Demalsy",
+      "año": "2026",
+      "descripcion": "Parke Sessions - Vol. 1\nAlex Parke convida Pascal Demalsy\n\nParke Sessions é uma série de gravações idealizada por Alex Parke e dedicada a encontros musicais espontâneos.\n\nNeste primeiro volume, o anfitrião recebe o sanfonista belga Pascal Demalsy.",
+      "bandcamp": "https://jeveldiscos.bandcamp.com/album/parke-sessions-vol-1-pascal-demalsy",
+      "cover": "parke_seshn_1_cover.jpg.jpeg",
+      "destacado": true,
+      "recordbox": true,
+      "reseñaId": ""
+    },
+    {
       "id": "mateshpil",
       "titulo": "מאַטעשפּיל",
       "subtitulo": "Mateshpil",
@@ -9,7 +22,7 @@
       "descripcion": "Una sesión klezmer en Buenos Aires, 2024.",
       "bandcamp": "https://jeveldiscos.bandcamp.com",
       "cover": "Mateshpil-cover.jpg",
-      "destacado": true,
+      "destacado": false,
       "recordbox": false,
       "reseñaId": ""
     }
