@@ -88,10 +88,10 @@ const translations = {
 // ---- LANGUAGE SWITCHER ----
 function setLanguage(lang) {
   console.log('Setting language to:', lang);
-  
+
   const t = translations[lang];
   window._jevelT = t;
-  
+
   if (!t) {
     console.error('Language not found:', lang);
     return;
@@ -115,19 +115,24 @@ function setLanguage(lang) {
 
   // Set document language
   document.documentElement.lang = lang === 'pt' ? 'pt' : lang === 'en' ? 'en' : 'es';
-  
+
   // Save preference to localStorage
   localStorage.setItem('jevel-language', lang);
-  
+
+  // Avisar al resto de la página (ej: descripciones de discos cargadas desde
+  // data.json) que el idioma cambió, para que puedan re-renderizar su propio
+  // contenido dinámico sin tener que recargar la página.
+  document.dispatchEvent(new CustomEvent('jevel:langchange', { detail: { lang } }));
+
   console.log('Language set successfully');
 }
 
 function setupLangSwitcher() {
   console.log('Setting up language switcher');
-  
+
   const buttons = document.querySelectorAll('.lang-btn');
   console.log('Found', buttons.length, 'language buttons');
-  
+
   buttons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -136,7 +141,7 @@ function setupLangSwitcher() {
       setLanguage(lang);
     });
   });
-  
+
   // Restore saved language preference
   const savedLang = localStorage.getItem('jevel-language') || 'es';
   console.log('Restoring saved language:', savedLang);
