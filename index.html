@@ -321,55 +321,72 @@
 
 <script src="script.js"></script>
 <script>
-(async function loadData() {
-  try {
-    const r = await fetch('data.json?t=' + Date.now());
-    const data = await r.json();
-    const lang = localStorage.getItem('jevel-language') || 'es';
-    const t = (key) => (window._jevelT && window._jevelT[key]) || key;
+(function () {
+  let discosData = null; // guarda el data.json ya parseado para poder re-renderizar al cambiar idioma
 
-    // Helper: obtener entrada de blog vinculada a un disco
-    const getReseña = (disco) => disco.reseñaId
+  // Devuelve la descripción en el idioma pedido. Acepta tanto el formato nuevo
+  // ({es,en,pt}) como discos viejos donde "descripcion" es un string simple.
+  function getDescripcion(d, lang) {
+    const desc = d.descripcion;
+    if (!desc) return '';
+    if (typeof desc === 'string') return desc;
+    return desc[lang] || desc.es || desc.en || desc.pt || '';
+  }
+
+  function getReseña(disco, data) {
+    return disco.reseñaId
       ? (data.blogs || []).find(b => b.id === disco.reseñaId)
       : null;
+  }
 
-    // ---- DESTACADO ----
+  function currentLang() {
+    return localStorage.getItem('jevel-language') || 'es';
+  }
+
+  function t(key) {
+    return (window._jevelT && window._jevelT[key]) || key;
+  }
+
+  function renderRelease(data, lang) {
     const disco = (data.discos || []).find(d => d.destacado);
-    if (disco) {
-      const listenLabel = { es: 'Escuchar en Bandcamp →', en: 'Listen on Bandcamp →', pt: 'Ouvir no Bandcamp →' };
-      const listenNow   = { es: 'Escuchar ahora', en: 'Listen now', pt: 'Ouvir agora' };      const coverHtml = disco.cover
-        ? `<img src="${disco.cover}" alt="${disco.subtitulo || disco.titulo}" class="cover-img" onerror="this.style.display='none'"/>`
-        : `<div style="width:100%;aspect-ratio:1;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:4rem;color:var(--mid)">✦</div>`;
+    if (!disco) return;
 
-      document.getElementById('release-inner').innerHTML = `
+    const listenLabel = { es: 'Escuchar en Bandcamp →', en: 'Listen on Bandcamp →', pt: 'Ouvir no Bandcamp →' };
+    const listenNow   = { es: 'Escuchar ahora', en: 'Listen now', pt: 'Ouvir agora' };
+    const descripcion = getDescripcion(disco, lang);
+
+    const coverHtml = disco.cover
+      ? `<img src="${disco.cover}" alt="${disco.subtitulo || disco.titulo}" class="cover-img" onerror="this.style.display='none'"/>`
+      : `<div style="width:100%;aspect-ratio:1;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:4rem;color:var(--mid)">✦</div>`;
+
+    document.getElementById('release-inner').innerHTML = `
+      ${disco.bandcamp
+        ? `<a href="${disco.bandcamp}" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
+             <div class="cover-wrap">
+               ${coverHtml}
+               <div class="cover-overlay"><span>${listenLabel[lang] || listenLabel.es}</span></div>
+             </div>
+           </a>`
+        : `<div class="cover-link"><div class="cover-wrap">${coverHtml}</div></div>`
+      }
+      <div class="release-info">
+        <h2 class="release-title">${disco.titulo || ''}</h2>
+        ${disco.subtitulo  ? `<h3 class="release-subtitle">${disco.subtitulo}</h3>` : ''}
+        ${disco.artista    ? `<p class="release-artist">${disco.artista}</p>` : ''}
+        ${descripcion      ? `<p class="release-desc">${descripcion}</p>` : ''}
         ${disco.bandcamp
-          ? `<a href="${disco.bandcamp}" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
-               <div class="cover-wrap">
-                 ${coverHtml}
-                 <div class="cover-overlay"><span data-i18n="listenBandcamp">${listenLabel[lang] || listenLabel.es}</span></div>
-               </div>
+          ? `<a href="${disco.bandcamp}" target="_blank" class="btn-bandcamp">
+               <span>${listenNow[lang] || listenNow.es}</span>
+               <span class="btn-arrow">→</span>
              </a>`
-          : `<div class="cover-link"><div class="cover-wrap">${coverHtml}</div></div>`
-        }
-        <div class="release-info">
-          <h2 class="release-title">${disco.titulo || ''}</h2>
-          ${disco.subtitulo  ? `<h3 class="release-subtitle">${disco.subtitulo}</h3>` : ''}
-          ${disco.artista    ? `<p class="release-artist">${disco.artista}</p>` : ''}
-          ${disco.descripcion? `<p class="release-desc">${disco.descripcion}</p>` : ''}
-          ${disco.bandcamp
-            ? `<a href="${disco.bandcamp}" target="_blank" class="btn-bandcamp">
-                 <span data-i18n="listenNow">${listenNow[lang] || listenNow.es}</span>
-                 <span class="btn-arrow">→</span>
-               </a>`
-            : ''}
-          ${(() => { const res = getReseña(disco); return res ? `<a href="prensa.html#${res.id}" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;border-bottom:1px solid var(--mid);margin-top:0.8rem;transition:color 0.15s,border-color 0.15s" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--mid)';this.style.borderColor='var(--mid)'">${t('reviewPrefix')} ${res.titulo}</a>` : ''; })()}
-        </div>`;
+          : ''}
+        ${(() => { const res = getReseña(disco, data); return res ? `<a href="prensa.html#${res.id}" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;border-bottom:1px solid var(--mid);margin-top:0.8rem;transition:color 0.15s,border-color 0.15s" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--mid)';this.style.borderColor='var(--mid)'">${t('reviewPrefix')} ${res.titulo}</a>` : ''; })()}
+      </div>`;
 
-      if (typeof setLanguage === 'function') setLanguage(lang);
-      if (typeof setupTilt  === 'function') setupTilt();
-    }
+    if (typeof setupTilt === 'function') setupTilt();
+  }
 
-    // ---- RECORD BOX ----
+  function renderRecordbox(data, lang) {
     const recordbox = (data.discos || []).filter(d => d.recordbox);
     const list = document.getElementById('recordbox-list');
 
@@ -391,7 +408,7 @@
         </div>
         <div class="recordbox-right">
           ${d.año ? `<span class="recordbox-año">${d.año}</span>` : ''}
-          ${(() => { const res = getReseña(d); return res ? `<a class="recordbox-link" href="prensa.html#${res.id}" rel="noopener">${t('reviewLink')}</a>` : ''; })()}
+          ${(() => { const res = getReseña(d, data); return res ? `<a class="recordbox-link" href="prensa.html#${res.id}" rel="noopener">${t('reviewLink')}</a>` : ''; })()}
           ${d.bandcamp
             ? `<a class="recordbox-link" href="${d.bandcamp}" target="_blank" rel="noopener">Bandcamp →</a>`
             : ''}
@@ -399,16 +416,35 @@
       </li>`;
     }).join('');
 
-    // Reveal on scroll
+    // Reveal on scroll (se vuelve a aplicar cada vez que se re-renderiza la lista)
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.05 });
     list.querySelectorAll('.recordbox-item').forEach(el => observer.observe(el));
-
-  } catch(e) {
-    console.warn('No se pudo cargar data.json, usando fallback.');
-    document.getElementById('recordbox-list').innerHTML = '';
   }
+
+  function renderAll(lang) {
+    if (!discosData) return;
+    renderRelease(discosData, lang);
+    renderRecordbox(discosData, lang);
+  }
+
+  async function loadData() {
+    try {
+      const r = await fetch('data.json?t=' + Date.now());
+      discosData = await r.json();
+      renderAll(currentLang());
+    } catch (e) {
+      console.warn('No se pudo cargar data.json, usando fallback.');
+      document.getElementById('recordbox-list').innerHTML = '';
+    }
+  }
+
+  // Cuando cambia el idioma (botones .lang-btn en script.js), se re-renderiza
+  // el destacado y el catálogo con las traducciones y descripciones correctas.
+  document.addEventListener('jevel:langchange', (e) => renderAll(e.detail.lang));
+
+  loadData();
 })();
 </script>
 
