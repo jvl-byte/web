@@ -241,6 +241,29 @@ textarea { resize: vertical; min-height: 100px; }
 .form-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
 .form-actions .btn { width: auto; margin-top: 0; }
 
+/* DESCRIPCIONES MULTI-IDIOMA */
+.desc-lang-group {
+  grid-column: 1 / -1;
+  border: 1.5px solid var(--ink);
+  background: var(--paper-dark);
+  padding: 1rem 1.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.desc-lang-group > .field-label {
+  margin-bottom: 0;
+}
+.desc-lang-row { display: flex; flex-direction: column; gap: 0.35rem; }
+.desc-lang-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+.desc-lang-row textarea { min-height: 80px; background: var(--paper); }
+
 /* CARDS */
 .cards { display: flex; flex-direction: column; gap: 1.2rem; }
 .card {
@@ -272,6 +295,13 @@ textarea { resize: vertical; min-height: 100px; }
   font-size: 0.88rem;
   line-height: 1.7;
   color: var(--mid);
+}
+.card-desc .desc-lang-badge {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: 0.4rem;
 }
 .card-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
 
@@ -373,9 +403,20 @@ textarea { resize: vertical; min-height: 100px; }
             <label class="field-label">Año</label>
             <input type="number" id="d-año" placeholder="2024"/>
           </div>
-          <div class="form-group full">
-            <label class="field-label">Descripción</label>
-            <textarea id="d-descripcion" placeholder="Una sesión klezmer..."></textarea>
+          <div class="desc-lang-group">
+            <label class="field-label">Descripción (por idioma)</label>
+            <div class="desc-lang-row">
+              <span class="desc-lang-tag">Español</span>
+              <textarea id="d-descripcion-es" placeholder="Una sesión klezmer..."></textarea>
+            </div>
+            <div class="desc-lang-row">
+              <span class="desc-lang-tag">English</span>
+              <textarea id="d-descripcion-en" placeholder="A klezmer session..."></textarea>
+            </div>
+            <div class="desc-lang-row">
+              <span class="desc-lang-tag">Português</span>
+              <textarea id="d-descripcion-pt" placeholder="Uma sessão klezmer..."></textarea>
+            </div>
           </div>
           <div class="form-group">
             <label class="field-label">URL Bandcamp</label>
@@ -581,7 +622,7 @@ function resetForm() {
   if (recbox) recbox.checked = false;
   const resSel = document.getElementById('d-reseña');
   if (resSel) resSel.value = '';
-  ['d-titulo','d-subtitulo','d-artista','d-año','d-descripcion','d-bandcamp','d-cover',
+  ['d-titulo','d-subtitulo','d-artista','d-año','d-descripcion-es','d-descripcion-en','d-descripcion-pt','d-bandcamp','d-cover',
    'b-titulo','b-fecha','b-contenido'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
@@ -590,6 +631,14 @@ function resetForm() {
   if (sel) sel.value = 'nota';
   document.getElementById('disco-form-title').textContent = 'Nuevo disco';
   document.getElementById('blog-form-title').textContent = 'Nueva entrada';
+}
+
+// Devuelve el texto de descripción en un idioma dado, aceptando tanto el formato
+// nuevo (objeto {es,en,pt}) como discos viejos guardados con descripcion como string.
+function getDescLang(descripcion, lang) {
+  if (!descripcion) return '';
+  if (typeof descripcion === 'string') return descripcion;
+  return descripcion[lang] || '';
 }
 
 // ---- SAVE ----
@@ -603,7 +652,11 @@ async function saveItem(type) {
       subtitulo: document.getElementById('d-subtitulo').value.trim(),
       artista: document.getElementById('d-artista').value.trim(),
       año: document.getElementById('d-año').value.trim(),
-      descripcion: document.getElementById('d-descripcion').value.trim(),
+      descripcion: {
+        es: document.getElementById('d-descripcion-es').value.trim(),
+        en: document.getElementById('d-descripcion-en').value.trim(),
+        pt: document.getElementById('d-descripcion-pt').value.trim(),
+      },
       bandcamp: document.getElementById('d-bandcamp').value.trim(),
       cover: document.getElementById('d-cover').value.trim(),
       destacado: document.getElementById('d-destacado').checked,
@@ -659,7 +712,9 @@ function editItem(type, id) {
     document.getElementById('d-subtitulo').value = item.subtitulo || '';
     document.getElementById('d-artista').value = item.artista || '';
     document.getElementById('d-año').value = item.año || '';
-    document.getElementById('d-descripcion').value = item.descripcion || '';
+    document.getElementById('d-descripcion-es').value = getDescLang(item.descripcion, 'es');
+    document.getElementById('d-descripcion-en').value = getDescLang(item.descripcion, 'en');
+    document.getElementById('d-descripcion-pt').value = getDescLang(item.descripcion, 'pt');
     document.getElementById('d-bandcamp').value = item.bandcamp || '';
     document.getElementById('d-cover').value = item.cover || '';
     document.getElementById('d-destacado').checked = item.destacado || false;
@@ -717,7 +772,10 @@ function renderList(type) {
       title = `${item.titulo || ''} ${item.subtitulo ? `<small style="font-family:var(--font-mono);font-size:0.7em;color:var(--mid)">${item.subtitulo}</small>` : ''}${item.destacado ? ' <small style="font-family:var(--font-mono);font-size:0.65em;background:var(--ink);color:var(--paper);padding:0.1em 0.5em;letter-spacing:0.1em">★ INICIO</small>' : ''}${item.recordbox ? ' <small style="font-family:var(--font-mono);font-size:0.65em;border:1px solid var(--ink);padding:0.1em 0.5em;letter-spacing:0.1em">□ RECORD BOX</small>' : ''}`;
       meta = [item.artista, item.año].filter(Boolean).join(' · ');
       const blogVinculado = item.reseñaId ? (DATA.blogs || []).find(b => b.id === item.reseñaId) : null;
-      desc = (item.descripcion || '') + (blogVinculado ? ` <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mid);display:inline-block;margin-top:0.3rem">✦ Blog: ${blogVinculado.titulo}</span>` : '');
+      // Vista previa: se muestra la descripción en español, con etiqueta de idioma
+      const descEs = getDescLang(item.descripcion, 'es');
+      desc = (descEs ? `<span class="desc-lang-badge">ES</span>${descEs}` : '') +
+             (blogVinculado ? ` <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mid);display:inline-block;margin-top:0.3rem">✦ Blog: ${blogVinculado.titulo}</span>` : '');
     }
     if (type === 'blogs') {
       title = item.titulo || '';
