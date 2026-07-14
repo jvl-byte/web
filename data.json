@@ -23,7 +23,7 @@
       "bandcamp": "https://jeveldiscos.bandcamp.com",
       "cover": "Mateshpil-cover.jpg",
       "destacado": false,
-      "recordbox": false,
+      "recordbox": true,
       "reseñaId": ""
     }
   ],
