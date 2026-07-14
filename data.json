@@ -1,19 +1,6 @@
 {
   "discos": [
     {
-      "id": "1779579548699",
-      "titulo": "Prueba Título",
-      "subtitulo": "Prueba Subtítulo",
-      "artista": "Prueba Artista",
-      "año": "2026",
-      "descripcion": "Prueba descripción",
-      "bandcamp": "https://wormsheriff.bandcamp.com/album/everyone-is-a-light",
-      "cover": "Mateshpil-cover.jpg",
-      "destacado": false,
-      "recordbox": false,
-      "reseñaId": ""
-    },
-    {
       "id": "mateshpil",
       "titulo": "מאַטעשפּיל",
       "subtitulo": "Mateshpil",
