@@ -301,6 +301,7 @@ body::before {
   color: var(--mid);
   margin-bottom: 2.2rem;
   max-width: 340px;
+  white-space: pre-line;
 }
 
 .btn-bandcamp {
