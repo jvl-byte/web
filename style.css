@@ -217,7 +217,7 @@ body::before {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
-  align-items: center;
+  align-items: start;
 }
 
 .release-info {
@@ -229,6 +229,9 @@ body::before {
 .cover-link {
   display: block;
   text-decoration: none;
+  position: sticky;
+  top: 6rem;
+  align-self: start;
 }
 
 .cover-wrap {
@@ -628,6 +631,10 @@ body::before {
   .game-inner {
     grid-template-columns: 1fr;
     gap: 2.5rem;
+  }
+
+  .cover-link {
+    position: static;
   }
 
   .game-visual {
