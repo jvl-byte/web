@@ -198,6 +198,27 @@
 </footer>
 
 <script>
+// ---- IDIOMA ----
+// Usa la misma clave de localStorage que script.js ('jevel-language'),
+// que es donde el selector de idioma del resto del sitio guarda la
+// preferencia del usuario.
+function getLang() {
+  const stored = localStorage.getItem('jevel-language');
+  if (stored && ['es','en','pt'].includes(stored)) return stored;
+  const nav = (navigator.language || 'es').slice(0,2).toLowerCase();
+  if (['es','en','pt'].includes(nav)) return nav;
+  return 'es';
+}
+
+// Devuelve la descripción en el idioma actual. Compatible con discos viejos
+// donde "descripcion" todavía es un string simple en vez de {es,en,pt}.
+function getDescripcion(d, lang) {
+  const desc = d.descripcion;
+  if (!desc) return '';
+  if (typeof desc === 'string') return desc;
+  return desc[lang] || desc.es || desc.en || desc.pt || '';
+}
+
 async function loadDiscos() {
   try {
     const r = await fetch(`data.json?t=${Date.now()}`);
@@ -210,6 +231,7 @@ async function loadDiscos() {
 
 function renderDiscos(discos) {
   const grid = document.getElementById('discos-grid');
+  const lang = getLang();
   if (!discos.length) {
     grid.innerHTML = '<div class="empty-msg">✦ &nbsp; Próximamente</div>';
     return;
@@ -219,6 +241,7 @@ function renderDiscos(discos) {
       ? `<img src="${d.cover}" alt="${d.subtitulo || d.titulo}" class="disco-cover-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="disco-cover-placeholder" style="display:none">✦</div>`
       : `<div class="disco-cover-placeholder">✦</div>`;
     const link = d.bandcamp ? `href="${d.bandcamp}" target="_blank" rel="noopener"` : '';
+    const descripcion = getDescripcion(d, lang);
     return `
     <div class="disco-card" style="transition-delay:${i*0.1}s">
       <div class="disco-cover-wrap">
@@ -230,7 +253,7 @@ function renderDiscos(discos) {
         ${d.subtitulo ? `<div class="disco-subtitulo">${d.subtitulo}</div>` : ''}
         ${d.artista ? `<div class="disco-artista">${d.artista}</div>` : ''}
         ${d.año ? `<div class="disco-año">${d.año}</div>` : ''}
-        ${d.descripcion ? `<div class="disco-desc">${d.descripcion}</div>` : ''}
+        ${descripcion ? `<div class="disco-desc">${descripcion}</div>` : ''}
         ${d.bandcamp ? `<a class="disco-btn" ${link}>Escuchar <span>→</span></a>` : ''}
       </div>
     </div>`;
