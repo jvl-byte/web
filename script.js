@@ -296,7 +296,7 @@ function fitsDotNav() {
   const GAP = 32; // margen mínimo deseado entre el índice y el contenido, en px
   const navRect = nav.getBoundingClientRect();
 
-  const guards = document.querySelectorAll('.release, .playlist, .recordbox, .game, .contact');
+  const guards = document.querySelectorAll('.release, .playlist, .recordbox, .game-inner, .contact');
   let minContentLeft = Infinity;
 
   guards.forEach(el => {
