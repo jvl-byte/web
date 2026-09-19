@@ -4,184 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Jevel</title>
+<meta name="description" content="Jevel es un sello independiente de música ídish y klezmer con base en Buenos Aires. Descubrí nuestros lanzamientos, catálogo y un juego para practicar el alef-beys." />
 <link rel="stylesheet" href="style.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-/* ---- RECORD BOX ---- */
-.recordbox {
-  padding: 5rem 2rem;
-  border-bottom: 2px solid var(--ink);
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.recordbox-list {
-  list-style: none;
-  border-top: 1px solid var(--ink);
-}
-
-.recordbox-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: stretch;
-  gap: 0;
-  border-bottom: 1px solid rgba(26,18,9,0.12);
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.5s, transform 0.5s, border-color 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.recordbox-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--accent);
-  transform: scaleY(0);
-  transition: transform 0.2s cubic-bezier(0.22,1,0.36,1);
-  transform-origin: bottom;
-}
-.recordbox-item:hover::before { transform: scaleY(1); }
-.recordbox-item.visible { opacity: 1; transform: translateY(0); }
-
-.recordbox-cover {
-  width: 160px;
-  height: 160px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-right: 1px solid rgba(26,18,9,0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper-dark);
-}
-.recordbox-cover img {
-  width: 160px;
-  height: 160px;
-  object-fit: cover;
-  display: block;
-  filter: contrast(1.05) saturate(0.9);
-  transition: filter 0.3s;
-}
-.recordbox-item:hover .recordbox-cover img { filter: contrast(1.1) saturate(1); }
-.recordbox-cover-placeholder {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  color: var(--mid);
-  opacity: 0.4;
-  width: 60px;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.recordbox-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 1rem 1.2rem;
-  justify-content: center;
-}
-.recordbox-artista {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  color: var(--mid);
-}
-.recordbox-titulo {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  line-height: 1.2;
-  color: var(--ink);
-}
-.recordbox-subtitulo {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--mid);
-  letter-spacing: 0.08em;
-}
-
-.recordbox-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-shrink: 0;
-  padding: 1rem 1.2rem;
-}
-.recordbox-año {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--mid);
-  letter-spacing: 0.1em;
-}
-.recordbox-link {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink);
-  text-decoration: none;
-  border-bottom: 1px solid var(--ink);
-  padding-bottom: 0.05rem;
-  transition: color 0.15s, border-color 0.15s;
-  white-space: nowrap;
-}
-.recordbox-link:hover { color: var(--accent); border-color: var(--accent); }
-
-.recordbox-empty {
-  padding: 3rem 0;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--mid);
-  letter-spacing: 0.05em;
-}
-
-@media (max-width: 600px) {
-  .recordbox {
-    padding: 3rem 1rem;
-  }
-  .recordbox-item {
-    grid-template-columns: 80px 1fr auto;
-    grid-template-rows: auto;
-  }
-  .recordbox-cover {
-    width: 80px;
-    height: 80px;
-    border-right: 1px solid rgba(26,18,9,0.12);
-    border-bottom: none;
-  }
-  .recordbox-cover img {
-    width: 80px;
-    height: 80px;
-  }
-  .recordbox-left {
-    padding: 0.6rem 0.8rem;
-  }
-  .recordbox-artista {
-    font-size: 0.7rem;
-  }
-  .recordbox-titulo {
-    font-size: 0.95rem;
-  }
-  .recordbox-right {
-    padding: 0.6rem 0.6rem 0.6rem 0;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.4rem;
-    justify-content: center;
-  }
-  .recordbox-año { display: none; }
-  .recordbox-link {
-    font-size: 0.68rem;
-    letter-spacing: 0.08em;
-  }
-}
-</style>
 </head>
 <body>
 
@@ -246,7 +72,7 @@
   <div class="release-inner" id="release-inner">
     <a href="https://jeveldiscos.bandcamp.com" target="_blank" class="cover-link" aria-label="Escuchar en Bandcamp">
       <div class="cover-wrap">
-        <img src="Mateshpil-cover.jpg" alt="Mateshpil" class="cover-img" />
+        <img src="Mateshpil-cover.jpg" alt="Mateshpil" class="cover-img" loading="lazy" />
         <div class="cover-overlay">
           <span data-i18n="listenBandcamp">Escuchar en Bandcamp →</span>
         </div>
@@ -274,7 +100,7 @@
   <div class="playlist-inner">
     <a href="https://bandcamp.com/discotecajevel/playlist/playlist" target="_blank" rel="noopener" class="playlist-cover-link" aria-label="Escuchar playlist en Bandcamp">
       <div class="playlist-cover-wrap">
-        <img src="playlist-imagen.webp" alt="Playlist Jevel" class="playlist-cover-img" />
+        <img src="playlist-imagen.webp" alt="Playlist Jevel" class="playlist-cover-img" loading="lazy" />
         <div class="playlist-cover-overlay">
           <span data-i18n="listenBandcamp">Escuchar en Bandcamp →</span>
         </div>
@@ -328,7 +154,7 @@
     </div>
     <div class="game-visual">
       <div class="game-photo-wrap">
-        <img src="03.jpg" alt="Oyfn Pripetshik" class="game-photo" />
+        <img src="03.jpg" alt="Oyfn Pripetshik" class="game-photo" loading="lazy" />
       </div>
     </div>
   </div>
@@ -339,7 +165,7 @@
 <section class="contact" id="contact">
   <div class="section-label" data-i18n="contactLabel">Links y contacto</div>
   <div class="contact-body">
-    <img src="vitrola.png" alt="" class="rca-img" />
+    <img src="vitrola.png" alt="" class="rca-img" loading="lazy" />
     <div class="contact-links">
       <a href="mailto:jeveldiscos@gmail.com" class="contact-item">
         <span class="contact-icon">·</span>
@@ -364,7 +190,7 @@
 <!-- FOOTER -->
 <footer class="footer">
   <div class="footer-logo-wrap">
-    <img src="logolapiz.png" alt="Jevel" class="footer-logo" />
+    <img src="logolapiz.png" alt="Jevel" class="footer-logo" loading="lazy" />
   </div>
   <div class="footer-divider"></div>
   <p class="footer-text">© 2026 Jevel</p>
@@ -408,7 +234,7 @@
     const descripcion = getDescripcion(disco, lang);
 
     const coverHtml = disco.cover
-      ? `<img src="${disco.cover}" alt="${disco.subtitulo || disco.titulo}" class="cover-img" onerror="this.style.display='none'"/>`
+      ? `<img src="${disco.cover}" alt="${disco.subtitulo || disco.titulo}" class="cover-img" loading="lazy" onerror="this.style.display='none'"/>`
       : `<div style="width:100%;aspect-ratio:1;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:4rem;color:var(--mid)">✦</div>`;
 
     document.getElementById('release-inner').innerHTML = `
@@ -449,7 +275,7 @@
 
     list.innerHTML = recordbox.map((d, i) => {
       const coverHtml = d.cover
-        ? `<img src="${d.cover}" alt="${d.subtitulo || d.titulo}" onerror="this.parentElement.innerHTML='<span class=\\'recordbox-cover-placeholder\\'>✦</span>'" />`
+        ? `<img src="${d.cover}" alt="${d.subtitulo || d.titulo}" loading="lazy" onerror="this.parentElement.innerHTML='<span class=\\'recordbox-cover-placeholder\\'>✦</span>'" />`
         : `<span class="recordbox-cover-placeholder">✦</span>`;
       return `
       <li class="recordbox-item" style="transition-delay:${i * 0.06}s">
