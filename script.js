@@ -15,6 +15,12 @@ const translations = {
     playlistTitle: "Descubrí nuestra playlist",
     playlistDesc: "Las novedades de nuestro catálogo en Bandcamp.",
     playlistBtn: "Escuchar",
+    navHero: "Inicio",
+    navRelease: "Lanzamiento",
+    navPlaylist: "Playlist",
+    navCatalog: "Catálogo",
+    navGame: "Juego",
+    navContact: "Contacto",
     gameLabel: "el juego",
     gameDesc1: "Inspirado en la <em>folk lid</em> de Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: El Juego</strong> es una manera entretenida de practicar el alef-beys.",
     gameDesc2: "Con tres niveles de dificultad y desafíos personalizables, avanzás a tu ritmo.",
@@ -45,6 +51,12 @@ const translations = {
     playlistTitle: "Discover our playlist",
     playlistDesc: "The latest from our catalogue, on Bandcamp.",
     playlistBtn: "Listen",
+    navHero: "Home",
+    navRelease: "Release",
+    navPlaylist: "Playlist",
+    navCatalog: "Catalogue",
+    navGame: "Game",
+    navContact: "Contact",
     gameLabel: "the game",
     gameDesc1: "Inspired by the <em>folk lid</em> by Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: The Game</strong> is a fun way to practice the alef-beys.",
     gameDesc2: "With three difficulty levels and customizable challenges, you progress at your own pace.",
@@ -75,6 +87,12 @@ const translations = {
     playlistTitle: "Descubra nossa playlist",
     playlistDesc: "As novidades do nosso catálogo, no Bandcamp.",
     playlistBtn: "Ouvir",
+    navHero: "Início",
+    navRelease: "Lançamento",
+    navPlaylist: "Playlist",
+    navCatalog: "Catálogo",
+    navGame: "Jogo",
+    navContact: "Contato",
     gameLabel: "o jogo",
     gameDesc1: "Inspirado na <em>folk lid</em> de Mark Markovich Warshawsky, <strong>Oyfn Pripetshik: O Jogo</strong> é uma forma divertida de praticar o alef-beys.",
     gameDesc2: "Com três níveis de dificuldade e desafios personalizáveis, você avança no seu ritmo.",
@@ -242,6 +260,33 @@ function setupAudio() {
   });
 }
 
+// ---- SECTION DOT-NAV (scroll-spy) ----
+function setupDotNav() {
+  const navItems = document.querySelectorAll('.dot-nav-item');
+  if (!navItems.length) return;
+
+  const sections = Array.from(navItems)
+    .map(item => document.getElementById(item.dataset.section))
+    .filter(Boolean);
+
+  const setActive = (id) => {
+    navItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.section === id);
+    });
+  };
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    },
+    { threshold: 0.4, rootMargin: '-10% 0px -10% 0px' }
+  );
+
+  sections.forEach(section => observer.observe(section));
+}
+
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM fully loaded, initializing Jevel...');
@@ -249,5 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupReveal();
   setupTilt();
   setupAudio();
+  setupDotNav();
   console.log('Jevel initialized successfully');
 });
