@@ -27,9 +27,19 @@
   }
   #bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
 
+  /* ── BACK TO SITE BTN — always visible, top-left ── */
+  #site-back-btn {
+    position:fixed; top:9px; left:14px; z-index:24;
+    background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
+    border-radius:6px; color:var(--ash); font-size:17px;
+    width:33px; height:33px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+  }
+  #site-back-btn:hover { background:rgba(232,98,26,0.14); color:var(--fire); }
+
   /* ── LANG BACK BTN — top-left, title screen only ── */
   #lang-back-btn {
-    position:fixed; top:9px; left:14px; z-index:23;
+    position:fixed; top:9px; left:56px; z-index:23;
     background:rgba(255,220,150,0.07); border:1px solid rgba(232,98,26,0.2);
     border-radius:6px; color:var(--ash); font-size:16px;
     width:33px; height:33px; cursor:pointer;
@@ -780,7 +790,8 @@
     #music-btn.on-title { right:8px; }
     #title-share-btn  { right:46px; width:30px; height:30px; top:8px; }
     #home-btn         { right:50px; width:30px; height:30px; font-size:14px; top:8px; }
-    #lang-back-btn    { left:8px; width:30px; height:30px; font-size:14px; top:8px; }
+    #lang-back-btn    { left:50px; width:30px; height:30px; font-size:14px; top:8px; }
+    #site-back-btn    { left:8px; width:30px; height:30px; font-size:15px; top:8px; }
   }
 </style>
 </head>
@@ -790,6 +801,9 @@
 
 <!-- Fade overlay -->
 <div id="fade-overlay" style="position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:9999;"></div>
+
+<!-- Back to website button: always visible -->
+<button id="site-back-btn" onclick="confirmLeave()" tabindex="-1" title="Volver a jeveldiscos.com">←</button>
 
 <!-- Music button: always visible -->
 <button id="music-btn" onclick="toggleMusic()" tabindex="-1" title="Música / Music">🎵</button>
@@ -2041,6 +2055,7 @@ function returnToTitle() {
 
 function confirmLeave() {
   const t = T[lang];
+  if (gameRunning && !paused) { paused=true; document.getElementById('pause-btn').textContent='▶'; }
   document.getElementById('leave-text').textContent = t.leaveText;
   document.getElementById('leave-yes').textContent  = t.leaveYes;
   document.getElementById('leave-no').textContent   = t.leaveNo;
@@ -2049,11 +2064,12 @@ function confirmLeave() {
 
 function confirmLeaveYes() {
   document.getElementById('leave-modal').classList.remove('show');
-  window.open('https://www.jeveldiscos.com', '_blank');
+  window.location.href = 'https://www.jeveldiscos.com';
 }
 
 function confirmLeaveNo() {
   document.getElementById('leave-modal').classList.remove('show');
+  if (gameRunning) { paused=false; lastTime=performance.now(); document.getElementById('pause-btn').textContent='⏸'; }
 }
 
 function confirmHome() {
