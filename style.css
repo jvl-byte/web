@@ -57,6 +57,14 @@ body::before {
   flex-direction: column;
   border: 1.5px solid var(--ink);
   background: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.dot-nav.dot-nav--visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .dot-nav-item {
@@ -109,12 +117,6 @@ body::before {
 .dot-nav-item.active .dot-nav-dot {
   background: var(--accent);
   border-color: var(--accent);
-}
-
-@media (max-width: 480px) {
-  .dot-nav {
-    display: none;
-  }
 }
 
 /* ---- LANG SWITCHER ---- */
