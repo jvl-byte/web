@@ -287,6 +287,60 @@ function setupDotNav() {
   sections.forEach(section => observer.observe(section));
 }
 
+// Detecta en tiempo real si hay lugar para el índice sin que se superponga
+// con el contenido de las secciones, en vez de asumir un ancho de pantalla fijo.
+function fitsDotNav() {
+  const nav = document.getElementById('dotNav');
+  if (!nav) return false;
+
+  const GAP = 32; // margen mínimo deseado entre el índice y el contenido, en px
+  const navRect = nav.getBoundingClientRect();
+
+  const guards = document.querySelectorAll('.release, .playlist, .recordbox, .game, .contact');
+  let minContentLeft = Infinity;
+
+  guards.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    const paddingLeft = parseFloat(getComputedStyle(el).paddingLeft) || 0;
+    const contentLeft = rect.left + paddingLeft;
+    if (contentLeft < minContentLeft) minContentLeft = contentLeft;
+  });
+
+  if (!isFinite(minContentLeft)) return true; // no se encontraron secciones: no arriesgar, mostrar
+
+  return (navRect.right + GAP) <= minContentLeft;
+}
+
+function updateDotNavVisibility() {
+  const nav = document.getElementById('dotNav');
+  if (!nav) return;
+  nav.classList.toggle('dot-nav--visible', fitsDotNav());
+}
+
+function setupDotNavOverlapGuard() {
+  const nav = document.getElementById('dotNav');
+  if (!nav) return;
+
+  updateDotNavVisibility();
+
+  // Recalcular cuando las fuentes terminan de cargar (afecta el ancho del texto)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(updateDotNavVisibility);
+  }
+
+  // Recalcular al cambiar el tamaño de la ventana (con debounce)
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateDotNavVisibility, 120);
+  });
+
+  // Recalcular al cambiar de idioma (las etiquetas cambian de largo)
+  document.addEventListener('jevel:langchange', () => {
+    setTimeout(updateDotNavVisibility, 50);
+  });
+}
+
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM fully loaded, initializing Jevel...');
@@ -295,5 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupTilt();
   setupAudio();
   setupDotNav();
+  setupDotNavOverlapGuard();
   console.log('Jevel initialized successfully');
 });
