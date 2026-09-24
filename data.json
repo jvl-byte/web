@@ -13,7 +13,7 @@
       },
       "bandcamp": "https://jeveldiscos.bandcamp.com/album/parke-sessions-vol-1-pascal-demalsy",
       "cover": "parke_seshn_1_cover.jpg.jpeg",
-      "destacado": true,
+      "destacado": false,
       "recordbox": true,
       "reseñaId": ""
     },
@@ -30,7 +30,7 @@
       },
       "bandcamp": "https://jeveldiscos.bandcamp.com",
       "cover": "Mateshpil-cover.jpg",
-      "destacado": false,
+      "destacado": true,
       "recordbox": true,
       "reseñaId": ""
     }
